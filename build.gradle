@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.springframework.boot:spring-boot-starter-jdbc'
   runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
   runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
   runtimeOnly 'mysql:mysql-connector-java'
