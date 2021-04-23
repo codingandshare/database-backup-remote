@@ -20,7 +20,7 @@
         <property name="optional" value="true"/>
     </module>
     <module name="SuppressionFilter">
-        <property name="file" value="${config_loc}/suppressions.xml" />
+        <property name="file" value="${config_loc}/suppressions.xml"/>
     </module>
 
     <!-- Checks that a package-info.java file exists for each package.     -->
@@ -40,6 +40,7 @@
     <module name="FileLength"/>
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
+        <property name="max" value="120"/>
     </module>
 
     <!-- Checks for whitespace                               -->
