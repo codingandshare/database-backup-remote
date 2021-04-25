@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:jcoffee}
+    username: ${DB_USER:}
+    password: ${DB_PASS:}
+    driverClassName: org.mariadb.jdbc.Driver
+  config:
+    activate:
+      on-profile: mariadb
+app:
+  scheduleBackup: '${SCHEDULE_BACKUP:* 0 0/23 ? * * *}'

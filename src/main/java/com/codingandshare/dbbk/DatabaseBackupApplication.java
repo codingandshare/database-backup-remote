@@ -1,7 +1,11 @@
 package com.codingandshare.dbbk;
 
+import com.codingandshare.dbbk.exceptions.ValidateException;
+import com.codingandshare.dbbk.utils.DBBackupConst;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.Arrays;
 
 /**
  * Main class to start Service.
@@ -18,7 +22,31 @@ public class DatabaseBackupApplication {
    * @param args input parameters from command line.
    */
   public static void main(String[] args) {
-    SpringApplication.run(DatabaseBackupApplication.class, args);
+    String dbType = System.getenv(DBBackupConst.DB_TYPE_ENV);
+    try {
+      validateDBType(dbType);
+      SpringApplication springApplication = new SpringApplication(DatabaseBackupApplication.class);
+      springApplication.setAdditionalProfiles(dbType);
+      springApplication.run(args);
+    } catch (ValidateException e) {
+      System.err.println("Validate error");
+      e.printStackTrace();
+      System.exit(1);
+    }
   }
 
+  /**
+   * validate the dbType from env.
+   *
+   * @param dbType get from env
+   * @throws ValidateException when dbType is invalid.
+   */
+  static void validateDBType(String dbType) throws ValidateException {
+    if (dbType == null || dbType.isEmpty()) {
+      throw new ValidateException("Required environment DB_TYPE");
+    }
+    if (!Arrays.asList(DBBackupConst.DB_TYPE_SUPPORT).contains(dbType)) {
+      throw new ValidateException(String.format("Database type %s is invalid", dbType));
+    }
+  }
 }
