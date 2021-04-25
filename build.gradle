@@ -2,6 +2,7 @@ plugins {
   id 'org.springframework.boot' version '2.4.5'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'java'
+  id 'groovy'
 }
 
 group = 'com.codingandshare.dbbk'
@@ -9,6 +10,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 apply from: 'gradle/checkstyle.gradle'
+apply from: 'gradle/codenarc.gradle'
 
 repositories {
   mavenCentral()
@@ -21,9 +23,10 @@ dependencies {
   runtimeOnly 'mysql:mysql-connector-java'
   runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
   runtimeOnly 'org.postgresql:postgresql'
-  testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
 
-test {
-  useJUnitPlatform()
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'org.codehaus.groovy:groovy-all:2.4.4'
+  testImplementation 'org.spockframework:spock-core:1.3-groovy-2.4'
+  testImplementation 'org.spockframework:spock-spring:1.3-groovy-2.4'
+  testImplementation 'org.testcontainers:mariadb:1.15.1'
 }

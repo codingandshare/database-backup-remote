@@ -1,0 +1,21 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+}
+
+apply plugin: 'codenarc'
+
+dependencies {
+  codenarc 'org.gmetrics:GMetrics:1.0'
+  codenarc 'org.codenarc:CodeNarc:1.1'
+}
+
+codenarc {
+  toolVersion = '1.1'
+  reportFormat = 'html'
+}
+
+codenarcTest {
+  configFile = rootProject.file('config/codenarc/rulesTest.groovy')
+}
