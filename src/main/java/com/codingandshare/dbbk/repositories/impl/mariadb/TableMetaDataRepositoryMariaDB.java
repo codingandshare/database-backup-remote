@@ -1,13 +1,10 @@
 package com.codingandshare.dbbk.repositories.impl.mariadb;
 
+import com.codingandshare.dbbk.repositories.TableMetaDataAbstract;
 import com.codingandshare.dbbk.repositories.TableMetaDataRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.codingandshare.dbbk.utils.DBBackupConst;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The class implement <code>TableMetaDataRepository</code> interface handle MariaDB.
@@ -16,20 +13,26 @@ import java.util.List;
  * @since 4/23/21
  **/
 @Repository
-@Profile("mariadb")
-public class TableMetaDataRepositoryMariaDB implements TableMetaDataRepository {
-
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+@Profile(DBBackupConst.MARIADB)
+public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implements TableMetaDataRepository {
 
   /**
-   * The method to get all table of a database mariadb.
+   * Implement sqlGetAllTables to get sql get all tables with table_schema.
    *
-   * @return List tables.
+   * @return sql get all tables.
    */
   @Override
-  public List<String> getAllTables() {
-    return new ArrayList<>();
+  protected String sqlGetAllTables() {
+    return "SHOW TABLE STATUS FROM ${DB_NAME} WHERE Comment != 'VIEW'";
   }
 
+  /**
+   * Implement sqlGetAllViews to get sql get all views with table_schema.
+   *
+   * @return sql get all tables.
+   */
+  @Override
+  protected String sqlGetAllViews() {
+    return "SHOW TABLE STATUS FROM ${DB_NAME} WHERE Comment = 'VIEW'";
+  }
 }

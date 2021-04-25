@@ -14,5 +14,6 @@ public final class DBBackupConst {
   }
 
   public static final String DB_TYPE_ENV = "DB_TYPE";
-  public static final String[] DB_TYPE_SUPPORT = new String[]{"mariadb"};
+  public static final String MARIADB = "mariadb";
+  public static final String[] DB_TYPE_SUPPORT = new String[]{MARIADB};
 }
