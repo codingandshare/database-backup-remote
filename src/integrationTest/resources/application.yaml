@@ -1,0 +1,9 @@
+spring:
+  config:
+    use-legacy-processing: true
+  profiles: mariadb-test
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mariadb:10.3:///database_bk?user=root&password=&TC_INITSCRIPT=test_init_mariadb.sql
+app:
+  runSchedule: false
