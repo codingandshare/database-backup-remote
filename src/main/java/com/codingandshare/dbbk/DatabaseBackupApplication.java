@@ -22,12 +22,10 @@ public class DatabaseBackupApplication {
    * @param args input parameters from command line.
    */
   public static void main(String[] args) {
-    String dbType = System.getenv(DBBackupConst.DB_TYPE_ENV);
+    String dbType = System.getenv(DBBackupConst.SPRING_PROFILES_ACTIVE);
     try {
       validateDBType(dbType);
-      SpringApplication springApplication = new SpringApplication(DatabaseBackupApplication.class);
-      springApplication.setAdditionalProfiles(dbType);
-      springApplication.run(args);
+      SpringApplication.run(DatabaseBackupApplication.class, args);
     } catch (ValidateException e) {
       System.err.println("Validate error");
       e.printStackTrace();

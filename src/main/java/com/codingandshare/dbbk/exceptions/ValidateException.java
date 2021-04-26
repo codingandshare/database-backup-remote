@@ -6,7 +6,7 @@ package com.codingandshare.dbbk.exceptions;
  * @author Nhan Dinh
  * @since 4/25/21
  **/
-public class ValidateException extends Exception {
+public class ValidateException extends RuntimeException {
 
   /**
    * Constructor to new instance for <code>ValidateException</code>.

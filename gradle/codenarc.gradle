@@ -19,3 +19,7 @@ codenarc {
 codenarcTest {
   configFile = rootProject.file('config/codenarc/rulesTest.groovy')
 }
+
+codenarcIntegrationTest {
+  configFile = rootProject.file('config/codenarc/rulesIntegrationTest.groovy')
+}

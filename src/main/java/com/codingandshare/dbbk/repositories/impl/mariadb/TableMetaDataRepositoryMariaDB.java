@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @since 4/23/21
  **/
 @Repository
-@Profile(DBBackupConst.MARIADB)
+@Profile({DBBackupConst.MARIADB + " | " + DBBackupConst.MARIADB_TEST})
 public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implements TableMetaDataRepository {
 
   /**
