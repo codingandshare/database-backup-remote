@@ -2,7 +2,6 @@ package com.codingandshare.dbbk.repositories.impl.mariadb;
 
 import com.codingandshare.dbbk.repositories.TableMetaDataAbstract;
 import com.codingandshare.dbbk.repositories.TableMetaDataRepository;
-import com.codingandshare.dbbk.utils.DBBackupConst;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Repository;
  * @since 4/23/21
  **/
 @Repository
-@Profile({DBBackupConst.MARIADB + " | " + DBBackupConst.MARIADB_TEST})
+@Profile({"mariadb | mariadb-test"})
 public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implements TableMetaDataRepository {
 
   /**
@@ -34,5 +33,15 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   @Override
   protected String sqlGetAllViews() {
     return "SHOW TABLE STATUS FROM ${DB_NAME} WHERE Comment = 'VIEW'";
+  }
+
+  /**
+   * Implement sqlGetAllTriggers to get sql get all triggers of database.
+   *
+   * @return sql get all triggers.
+   */
+  @Override
+  protected String sqlGetAllTriggers() {
+    return "SHOW TRIGGERS FROM ${DB_NAME}";
   }
 }
