@@ -32,4 +32,12 @@ public interface TableMetaDataRepository {
    * @return database name.
    */
   String getDatabaseName();
+
+  /**
+   * Get all triggers name.
+   *
+   * @param databaseName
+   * @return List trigger names.
+   */
+  List<String> getAllTriggers(String databaseName);
 }

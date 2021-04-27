@@ -35,6 +35,15 @@ class TableMetaDataRepositorySpec extends Specification {
     views == ['user_view']
   }
 
+  void 'Verify get all triggers'() {
+    when: 'get all triggers'
+    List<String> triggers = this.tableMetaDataRepository.getAllTriggers(DATABASE_NAME)
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    triggers == ['before_role_delete']
+  }
+
   void 'Verify get database name'() {
     when: 'get database name'
     String name = this.tableMetaDataRepository.databaseName

@@ -20,9 +20,6 @@ public abstract class TableMetaDataAbstract {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
-  @Autowired
-  private DataSource dataSource;
-
   /**
    * get database name from connection.
    *
@@ -60,6 +57,14 @@ public abstract class TableMetaDataAbstract {
     );
   }
 
+  public List<String> getAllTriggers(String databaseName) {
+    String sql = this.sqlGetAllTriggers().replace(DB_NAME_EXPRESSION, databaseName);
+    return this.jdbcTemplate.query(
+        sql,
+        (rs, rowNum) -> rs.getString("trigger")
+    );
+  }
+
   /**
    * Abstract method to get sql select all tables from database.
    *
@@ -69,7 +74,15 @@ public abstract class TableMetaDataAbstract {
 
   /**
    * Abstract method to get sql select all views from database.
+   *
    * @return sql get all views from database name.
    */
   protected abstract String sqlGetAllViews();
+
+  /**
+   * Abstract get sql select all triggers from database.
+   *
+   * @return
+   */
+  protected abstract String sqlGetAllTriggers();
 }
