@@ -3,7 +3,6 @@ package com.codingandshare.dbbk.repositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.List;
 
@@ -57,6 +56,12 @@ public abstract class TableMetaDataAbstract {
     );
   }
 
+  /**
+   * Get all trigger names.
+   *
+   * @param databaseName
+   * @return List trigger names
+   */
   public List<String> getAllTriggers(String databaseName) {
     String sql = this.sqlGetAllTriggers().replace(DB_NAME_EXPRESSION, databaseName);
     return this.jdbcTemplate.query(
@@ -82,7 +87,7 @@ public abstract class TableMetaDataAbstract {
   /**
    * Abstract get sql select all triggers from database.
    *
-   * @return
+   * @return sql get all triggers
    */
   protected abstract String sqlGetAllTriggers();
 }
