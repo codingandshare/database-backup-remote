@@ -52,4 +52,22 @@ class TableMetaDataRepositorySpec extends Specification {
     noExceptionThrown()
     name == DATABASE_NAME
   }
+
+  void 'Verify get all functions'() {
+    when: 'get all functions'
+    List<String> functions = this.tableMetaDataRepository.getAllSqlFunctions(DATABASE_NAME)
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    functions == ['getUserName_Func']
+  }
+
+  void 'Verify get all procedures'() {
+    when: 'get all procedures'
+    List<String> procedures = this.tableMetaDataRepository.getAllProcedures(DATABASE_NAME)
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    procedures == ['GetUserName']
+  }
 }

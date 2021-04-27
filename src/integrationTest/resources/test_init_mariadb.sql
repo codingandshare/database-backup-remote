@@ -40,7 +40,20 @@ SELECT u.*, r.role_name FROM `user` u
  JOIN `user_role` u_role ON u.id = u_role.user_id
  JOIN `role` r  ON r.id = u_role.role_id;
 
-CREATE TRIGGER before_role_delete
-    BEFORE DELETE ON role
-    FOR EACH ROW
-    DELETE FROM user_role WHERE role_id = OLD.id;
+CREATE TRIGGER before_role_delete BEFORE DELETE ON role FOR EACH ROW DELETE FROM user_role WHERE role_id = OLD.id;
+
+CREATE FUNCTION getUserName_Func()
+    RETURNS VARCHAR(20)
+    DETERMINISTIC
+BEGIN
+    DECLARE userName VARCHAR(20);
+    SET userName = 'Nhan Dinh';
+    RETURN (userName);
+END;
+
+CREATE PROCEDURE GetUserName(
+    OUT userName VARCHAR(20)
+)
+BEGIN
+    SET userName = 'Nhan Dinh';
+END;
