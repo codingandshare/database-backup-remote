@@ -71,6 +71,34 @@ public abstract class TableMetaDataAbstract {
   }
 
   /**
+   * get all procedure names.
+   *
+   * @param databaseName
+   * @return List procedure names
+   */
+  public List<String> getAllProcedures(String databaseName) {
+    String sql = this.sqlGetAllProcedures().replace(DB_NAME_EXPRESSION, databaseName);
+    return this.jdbcTemplate.query(
+        sql,
+        (rs, rowNum) -> rs.getString("Name")
+    );
+  }
+
+  /**
+   * get all functions.
+   *
+   * @param databaseName
+   * @return list function
+   */
+  public List<String> getAllSqlFunctions(String databaseName) {
+    String sql = this.sqlGetAllFunctions().replace(DB_NAME_EXPRESSION, databaseName);
+    return this.jdbcTemplate.query(
+        sql,
+        (rs, rowNum) -> rs.getString("Name")
+    );
+  }
+
+  /**
    * Abstract method to get sql select all tables from database.
    *
    * @return sql get all tables.
@@ -90,4 +118,18 @@ public abstract class TableMetaDataAbstract {
    * @return sql get all triggers
    */
   protected abstract String sqlGetAllTriggers();
+
+  /**
+   * Abstract get sql select all functions from database.
+   *
+   * @return sql get all functions
+   */
+  protected abstract String sqlGetAllFunctions();
+
+  /**
+   * Abstract get sql select all procedures from database.
+   *
+   * @return sql get all procedures
+   */
+  protected abstract String sqlGetAllProcedures();
 }

@@ -44,4 +44,24 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   protected String sqlGetAllTriggers() {
     return "SHOW TRIGGERS FROM ${DB_NAME}";
   }
+
+  /**
+   * Implement sqlGetAllFunctions to get sql get all functions of database.
+   *
+   * @return sql get all functions.
+   */
+  @Override
+  protected String sqlGetAllFunctions() {
+    return "SHOW FUNCTION STATUS WHERE DB = '${DB_NAME}'";
+  }
+
+  /**
+   * Implement sqlGetAllProcedures to get sql get all procedures of database.
+   *
+   * @return sql get all procedures.
+   */
+  @Override
+  protected String sqlGetAllProcedures() {
+    return "SHOW PROCEDURE STATUS WHERE DB = '${DB_NAME}'";
+  }
 }

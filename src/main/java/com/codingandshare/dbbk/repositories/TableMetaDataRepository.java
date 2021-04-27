@@ -40,4 +40,20 @@ public interface TableMetaDataRepository {
    * @return List trigger names.
    */
   List<String> getAllTriggers(String databaseName);
+
+  /**
+   * get all procedure names.
+   *
+   * @param databaseName
+   * @return List procedure names
+   */
+  List<String> getAllProcedures(String databaseName);
+
+  /**
+   * get all functions.
+   *
+   * @param databaseName
+   * @return list function
+   */
+  List<String> getAllSqlFunctions(String databaseName);
 }
