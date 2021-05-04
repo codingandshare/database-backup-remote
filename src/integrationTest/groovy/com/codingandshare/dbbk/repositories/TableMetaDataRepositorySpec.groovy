@@ -70,4 +70,24 @@ class TableMetaDataRepositorySpec extends Specification {
     noExceptionThrown()
     procedures == ['GetUserName']
   }
+
+  void 'Verify generate script create table'() {
+    when: 'generate script create table'
+    String sqlCreateTable = this.tableMetaDataRepository.generateScriptCreateTable('user')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    sqlCreateTable == '''CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) NOT NULL,
+  `password` varchar(500) NOT NULL,
+  `first_name` varchar(100) DEFAULT NULL,
+  `last_name` varchar(100) DEFAULT NULL,
+  `email` varchar(300) NOT NULL,
+  `gender` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'''
+  }
 }

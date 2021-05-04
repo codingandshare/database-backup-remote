@@ -132,4 +132,13 @@ public abstract class TableMetaDataAbstract {
    * @return sql get all procedures
    */
   protected abstract String sqlGetAllProcedures();
+
+  /**
+   * Expose JdbcTemplate to parent class for using.
+   *
+   * @return JdbcTemplate
+   */
+  protected JdbcTemplate getJdbcTemplate() {
+    return this.jdbcTemplate;
+  }
 }
