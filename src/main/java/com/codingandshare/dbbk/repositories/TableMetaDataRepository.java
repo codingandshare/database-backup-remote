@@ -56,4 +56,12 @@ public interface TableMetaDataRepository {
    * @return list function
    */
   List<String> getAllSqlFunctions(String databaseName);
+
+  /**
+   * Generate sql script for create table.
+   *
+   * @param tableName
+   * @return sql script create table
+   */
+  String generateScriptCreateTable(String tableName);
 }

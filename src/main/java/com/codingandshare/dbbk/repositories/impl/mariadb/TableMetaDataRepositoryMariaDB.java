@@ -64,4 +64,18 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   protected String sqlGetAllProcedures() {
     return "SHOW PROCEDURE STATUS WHERE DB = '${DB_NAME}'";
   }
+
+  /**
+   * Generate sql script for create table.
+   *
+   * @param tableName
+   * @return sql script create table
+   */
+  public String generateScriptCreateTable(String tableName) {
+    String sql = String.format("SHOW CREATE TABLE %s", tableName);
+    return this.getJdbcTemplate().queryForObject(
+        sql,
+        (rs, rowNum) -> rs.getString("Create Table")
+    );
+  }
 }
