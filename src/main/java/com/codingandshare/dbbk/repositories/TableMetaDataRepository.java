@@ -64,4 +64,12 @@ public interface TableMetaDataRepository {
    * @return sql script create table
    */
   String generateScriptCreateTable(String tableName);
+
+  /**
+   * Generate sql script for create view.
+   *
+   * @param viewName
+   * @return sql script create view
+   */
+  String generateScriptCreateView(String viewName);
 }
