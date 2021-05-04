@@ -78,4 +78,19 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
         (rs, rowNum) -> rs.getString("Create Table")
     );
   }
+
+  /**
+   * Generate sql script for create view.
+   *
+   * @param viewName
+   * @return sql script create view
+   */
+  @Override
+  public String generateScriptCreateView(String viewName) {
+    String sql = String.format("SHOW CREATE VIEW %s", viewName);
+    return this.getJdbcTemplate().queryForObject(
+        sql,
+        (rs, rowNum) -> rs.getString("Create View")
+    );
+  }
 }

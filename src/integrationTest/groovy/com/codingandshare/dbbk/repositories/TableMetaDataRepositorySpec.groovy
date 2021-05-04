@@ -2,6 +2,7 @@ package com.codingandshare.dbbk.repositories
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.TransientDataAccessResourceException
 import org.springframework.test.context.ActiveProfiles
 import spock.lang.Specification
 
@@ -90,4 +91,22 @@ class TableMetaDataRepositorySpec extends Specification {
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'''
   }
+
+  void 'Verify generate script create view when view not existing'() {
+    when: 'generate script create view'
+    this.tableMetaDataRepository.generateScriptCreateView('user')
+
+    then: 'Result as expect'
+    thrown(TransientDataAccessResourceException)
+  }
+
+  void 'Verify generate script create view successfully'() {
+    when: 'generate script create view'
+    String sqlCreateView = this.tableMetaDataRepository.generateScriptCreateView('user_view')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    sqlCreateView == '''CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `user_view` AS select `u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`password` AS `password`,`u`.`first_name` AS `first_name`,`u`.`last_name` AS `last_name`,`u`.`email` AS `email`,`u`.`gender` AS `gender`,`u`.`status` AS `status`,`r`.`role_name` AS `role_name` from ((`user` `u` join `user_role` `u_role` on(`u`.`id` = `u_role`.`user_id`)) join `role` `r` on(`r`.`id` = `u_role`.`role_id`))'''
+  }
+
 }
