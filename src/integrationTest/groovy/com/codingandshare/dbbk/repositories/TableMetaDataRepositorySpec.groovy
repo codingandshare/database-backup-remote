@@ -3,6 +3,7 @@ package com.codingandshare.dbbk.repositories
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.TransientDataAccessResourceException
+import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.test.context.ActiveProfiles
 import spock.lang.Specification
 
@@ -18,7 +19,7 @@ class TableMetaDataRepositorySpec extends Specification {
 
   private static final String DATABASE_NAME = 'test'
 
-  void 'Verify get all tables name'() {
+  def 'Verify get all tables name'() {
     when: 'get all tables'
     List<String> tables = this.tableMetaDataRepository.getAllTables(DATABASE_NAME)
 
@@ -27,7 +28,7 @@ class TableMetaDataRepositorySpec extends Specification {
     tables == ['role', 'user', 'user_role']
   }
 
-  void 'Verify get all views'() {
+  def 'Verify get all views'() {
     when: 'get all views'
     List<String> views = this.tableMetaDataRepository.getAllViews(DATABASE_NAME)
 
@@ -36,7 +37,7 @@ class TableMetaDataRepositorySpec extends Specification {
     views == ['user_view']
   }
 
-  void 'Verify get all triggers'() {
+  def 'Verify get all triggers'() {
     when: 'get all triggers'
     List<String> triggers = this.tableMetaDataRepository.getAllTriggers(DATABASE_NAME)
 
@@ -45,7 +46,7 @@ class TableMetaDataRepositorySpec extends Specification {
     triggers == ['before_role_delete']
   }
 
-  void 'Verify get database name'() {
+  def 'Verify get database name'() {
     when: 'get database name'
     String name = this.tableMetaDataRepository.databaseName
 
@@ -54,7 +55,7 @@ class TableMetaDataRepositorySpec extends Specification {
     name == DATABASE_NAME
   }
 
-  void 'Verify get all functions'() {
+  def 'Verify get all functions'() {
     when: 'get all functions'
     List<String> functions = this.tableMetaDataRepository.getAllSqlFunctions(DATABASE_NAME)
 
@@ -63,7 +64,7 @@ class TableMetaDataRepositorySpec extends Specification {
     functions == ['getUserName_Func']
   }
 
-  void 'Verify get all procedures'() {
+  def 'Verify get all procedures'() {
     when: 'get all procedures'
     List<String> procedures = this.tableMetaDataRepository.getAllProcedures(DATABASE_NAME)
 
@@ -72,7 +73,7 @@ class TableMetaDataRepositorySpec extends Specification {
     procedures == ['GetUserName']
   }
 
-  void 'Verify generate script create table'() {
+  def 'Verify generate script create table'() {
     when: 'generate script create table'
     String sqlCreateTable = this.tableMetaDataRepository.generateScriptCreateTable('user')
 
@@ -92,7 +93,15 @@ class TableMetaDataRepositorySpec extends Specification {
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'''
   }
 
-  void 'Verify generate script create view when view not existing'() {
+  def 'Verify generate script create table when table not existing'() {
+    when: 'generate script create table'
+    this.tableMetaDataRepository.generateScriptCreateTable('table_not_found')
+
+    then: 'Result as expect'
+    thrown(BadSqlGrammarException)
+  }
+
+  def 'Verify generate script create view when view not existing'() {
     when: 'generate script create view'
     this.tableMetaDataRepository.generateScriptCreateView('user')
 
@@ -100,7 +109,7 @@ class TableMetaDataRepositorySpec extends Specification {
     thrown(TransientDataAccessResourceException)
   }
 
-  void 'Verify generate script create view successfully'() {
+  def 'Verify generate script create view successfully'() {
     when: 'generate script create view'
     String sqlCreateView = this.tableMetaDataRepository.generateScriptCreateView('user_view')
 
@@ -109,4 +118,63 @@ class TableMetaDataRepositorySpec extends Specification {
     sqlCreateView == '''CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `user_view` AS select `u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`password` AS `password`,`u`.`first_name` AS `first_name`,`u`.`last_name` AS `last_name`,`u`.`email` AS `email`,`u`.`gender` AS `gender`,`u`.`status` AS `status`,`r`.`role_name` AS `role_name` from ((`user` `u` join `user_role` `u_role` on(`u`.`id` = `u_role`.`user_id`)) join `role` `r` on(`r`.`id` = `u_role`.`role_id`))'''
   }
 
+  def 'Verify generate script create trigger when trigger not existing'() {
+    when: 'generate script create trigger'
+    this.tableMetaDataRepository.generateScriptCreateTrigger('trigger_a')
+
+    then: 'Result as expect'
+    thrown(TransientDataAccessResourceException)
+  }
+
+  def 'Verify generate script create trigger successfully'(){
+    when: 'generate script create trigger'
+    String scriptTrigger = this.tableMetaDataRepository.generateScriptCreateTrigger('before_role_delete')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptTrigger == 'CREATE DEFINER=`root`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR EACH ROW DELETE FROM user_role WHERE role_id = OLD.id'
+  }
+
+  def 'Verify generate script create procedure when procedure not existing'() {
+    when: 'Generate script create procedure'
+    this.tableMetaDataRepository.generateScriptCreateProcedure('procedure_not_found')
+
+    then: 'Result as expect'
+    thrown(BadSqlGrammarException)
+  }
+
+  def 'Verify generate script create procedure successfully'() {
+    when: 'Generate script create procedure'
+    String scriptProcedure = this.tableMetaDataRepository.generateScriptCreateProcedure('GetUserName')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptProcedure == '''CREATE DEFINER=`root`@`%` PROCEDURE `GetUserName`( OUT userName VARCHAR(20) )
+BEGIN
+    SET userName = 'Nhan Dinh';
+END'''
+  }
+
+  def 'Verify generate script create function when function name not existing'() {
+    when: 'Generate script create function'
+    this.tableMetaDataRepository.generateScriptCreateFunction('function_not_found')
+
+    then: 'Result as expect'
+    thrown(BadSqlGrammarException)
+  }
+
+  def 'Verify generate script create function successfully'() {
+    when: 'Generate script create function'
+    String scriptFunction = this.tableMetaDataRepository.generateScriptCreateFunction('getUserName_Func')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptFunction == '''CREATE DEFINER=`root`@`%` FUNCTION `getUserName_Func`() RETURNS varchar(20) CHARSET latin1
+    DETERMINISTIC
+BEGIN
+    DECLARE userName VARCHAR(20);
+    SET userName = 'Nhan Dinh';
+    RETURN (userName);
+END'''
+  }
 }

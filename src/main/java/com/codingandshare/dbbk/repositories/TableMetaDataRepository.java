@@ -72,4 +72,28 @@ public interface TableMetaDataRepository {
    * @return sql script create view
    */
   String generateScriptCreateView(String viewName);
+
+  /**
+   * Generate sql script for create trigger.
+   *
+   * @param triggerName
+   * @return sql script create trigger
+   */
+  String generateScriptCreateTrigger(String triggerName);
+
+  /**
+   * Generate sql script for create procedure.
+   *
+   * @param procedureName
+   * @return sql script create procedure
+   */
+  String generateScriptCreateProcedure(String procedureName);
+
+  /**
+   * Generate sql script for create function.
+   *
+   * @param functionName
+   * @return sql script create function
+   */
+  String generateScriptCreateFunction(String functionName);
 }

@@ -22,4 +22,16 @@ class DataBaseBackupApplicationSpec extends Specification {
     ''     | 'Required environment DB_TYPE'
     'abc'  | 'Database type abc is invalid'
   }
+
+  def 'Verify validateDBType function successfully'() {
+    when: 'validate dbType'
+    DatabaseBackupApplication.validateDBType(dbType)
+
+    then: 'No throw exception'
+    noExceptionThrown()
+
+    where:
+    dbType    | _
+    'mariadb' | _
+  }
 }

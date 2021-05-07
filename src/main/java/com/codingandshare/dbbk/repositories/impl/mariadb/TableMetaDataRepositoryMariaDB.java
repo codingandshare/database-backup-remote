@@ -1,5 +1,4 @@
 package com.codingandshare.dbbk.repositories.impl.mariadb;
-
 import com.codingandshare.dbbk.repositories.TableMetaDataAbstract;
 import com.codingandshare.dbbk.repositories.TableMetaDataRepository;
 import org.springframework.context.annotation.Profile;
@@ -70,6 +69,7 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
    *
    * @param tableName
    * @return sql script create table
+   * @throws {@link org.springframework.dao.TransientDataAccessResourceException} when the view don't exists
    */
   public String generateScriptCreateTable(String tableName) {
     String sql = String.format("SHOW CREATE TABLE %s", tableName);
@@ -84,6 +84,7 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
    *
    * @param viewName
    * @return sql script create view
+   * @throws {@link org.springframework.dao.TransientDataAccessResourceException} when the view don't exists
    */
   @Override
   public String generateScriptCreateView(String viewName) {
@@ -91,6 +92,54 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
     return this.getJdbcTemplate().queryForObject(
         sql,
         (rs, rowNum) -> rs.getString("Create View")
+    );
+  }
+
+  /**
+   * Generate sql script for create trigger.
+   *
+   * @param triggerName
+   * @return sql script create trigger
+   * @throws {@link org.springframework.dao.TransientDataAccessResourceException} when the trigger don't exists
+   */
+  @Override
+  public String generateScriptCreateTrigger(String triggerName) {
+    String sql = String.format("SHOW CREATE TRIGGER %s", triggerName);
+    return this.getJdbcTemplate().queryForObject(
+        sql,
+        (rs, rowNum) -> rs.getString("SQL Original Statement")
+    );
+  }
+
+  /**
+   * Generate sql script for create procedure.
+   *
+   * @param procedureName
+   * @return sql script create procedure
+   * @throws {@link org.springframework.dao.TransientDataAccessResourceException} when the procedure don't exists
+   */
+  @Override
+  public String generateScriptCreateProcedure(String procedureName) {
+    String sql = String.format("SHOW CREATE PROCEDURE %s", procedureName);
+    return this.getJdbcTemplate().queryForObject(
+        sql,
+        (rs, rowNum) -> rs.getString("Create procedure")
+    );
+  }
+
+  /**
+   * Generate sql script for create function.
+   *
+   * @param functionName
+   * @return sql script create function
+   * @throws {@link org.springframework.jdbc.BadSqlGrammarException} when the function don't exists
+   */
+  @Override
+  public String generateScriptCreateFunction(String functionName) {
+    String sql = String.format("SHOW CREATE FUNCTION %s", functionName);
+    return this.getJdbcTemplate().queryForObject(
+        sql,
+        (rs, rowNum) -> rs.getString("Create Function")
     );
   }
 }
