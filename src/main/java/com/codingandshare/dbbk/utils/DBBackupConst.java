@@ -13,9 +13,7 @@ public final class DBBackupConst {
   private DBBackupConst() {
   }
 
-  public static final String DB_TYPE_ENV = "DB_TYPE";
   public static final String SPRING_PROFILES_ACTIVE = "SPRING_PROFILES_ACTIVE";
   public static final String MARIADB = "mariadb";
-  public static final String MARIADB_TEST = "mariadb-test";
   public static final String[] DB_TYPE_SUPPORT = new String[]{MARIADB};
 }
