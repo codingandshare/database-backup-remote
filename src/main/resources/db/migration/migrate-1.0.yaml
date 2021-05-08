@@ -1,0 +1,373 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: huunhancit
+      comment: Create and init data for BATCH_STEP_EXECUTION_SEQ table
+      changes:
+        - createTable:
+            tableName: CAS_BATCH_STEP_EXECUTION_SEQ
+            columns:
+              - column:
+                  name: ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - insert:
+            columns:
+              - column:
+                  name: ID
+                  value: 0
+            tableName: CAS_BATCH_STEP_EXECUTION_SEQ
+  - changeSet:
+      id: 2
+      author: huunhancit
+      comment: Create and init data for CAS_BATCH_JOB_EXECUTION_SEQ table
+      changes:
+        - createTable:
+            tableName: CAS_BATCH_JOB_EXECUTION_SEQ
+            columns:
+              - column:
+                  name: ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - insert:
+            columns:
+              - column:
+                  name: ID
+                  value: 0
+            tableName: CAS_BATCH_JOB_EXECUTION_SEQ
+  - changeSet:
+      id: 3
+      author: huunhancit
+      comment: Create and init data for CAS_BATCH_JOB_SEQ table
+      changes:
+        - createTable:
+            tableName: CAS_BATCH_JOB_SEQ
+            columns:
+              - column:
+                  name: ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - insert:
+            columns:
+              - column:
+                  name: ID
+                  value: 0
+            tableName: CAS_BATCH_JOB_SEQ
+  - changeSet:
+      id: 4
+      author: huunhancit
+      comment: add unique constraints for CAS_BATCH_STEP_EXECUTION_SEQ, CAS_BATCH_JOB_EXECUTION_SEQ, CAS_BATCH_JOB_SEQ
+      changes:
+        - addUniqueConstraint:
+            tableName: CAS_BATCH_STEP_EXECUTION_SEQ
+            columnNames: ID
+        - addUniqueConstraint:
+            tableName: CAS_BATCH_JOB_EXECUTION_SEQ
+            columnNames: ID
+        - addUniqueConstraint:
+            tableName: CAS_BATCH_JOB_SEQ
+            columnNames: ID
+  - changeSet:
+      id: 5
+      author: huunhancit
+      comment: Create CAS_BATCH_JOB_INSTANCE table
+      changes:
+        - createTable:
+            tableName: CAS_BATCH_JOB_INSTANCE
+            columns:
+              - column:
+                  name: JOB_INSTANCE_ID
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: VERSION
+                  type: BIGINT
+              - column:
+                  name: JOB_NAME
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: JOB_KEY
+                  type: VARCHAR(2500)
+  - changeSet:
+      id: 6
+      author: huunhancit
+      comment: add unique constraint for CAS_BATCH_JOB_INSTANCE table
+      changes:
+        - addUniqueConstraint:
+            tableName: CAS_BATCH_JOB_INSTANCE
+            columnNames: JOB_NAME,JOB_KEY
+  - changeSet:
+      id: 7
+      author: huunhancit
+      comment: Create CAS_BATCH_JOB_EXECUTION_PARAMS table
+      changes:
+        - createTable:
+            tableName: CAS_BATCH_JOB_EXECUTION_PARAMS
+            columns:
+              - column:
+                  name: JOB_EXECUTION_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: TYPE_CD
+                  type: VARCHAR(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: KEY_NAME
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: STRING_VAL
+                  type: VARCHAR(250)
+              - column:
+                  name: DATE_VAL
+                  type: DATETIME
+              - column:
+                  name: LONG_VAL
+                  type: BIGINT
+              - column:
+                  name: DOUBLE_VAL
+                  type: DOUBLE
+              - column:
+                  name: IDENTIFYING
+                  type: CHAR(1)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 8
+      author: huunhancit
+      comment: Create CAS_BATCH_JOB_EXECUTION table
+      changes:
+        - createTable:
+            tableName: CAS_BATCH_JOB_EXECUTION
+            columns:
+              - column:
+                  name: JOB_EXECUTION_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: VERSION
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: JOB_INSTANCE_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: CREATE_TIME
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: START_TIME
+                  type: DATETIME
+              - column:
+                  name: END_TIME
+                  type: DATETIME
+              - column:
+                  name: STATUS
+                  type: VARCHAR(10)
+              - column:
+                  name: EXIT_CODE
+                  type: VARCHAR(2500)
+              - column:
+                  name: EXIT_MESSAGE
+                  type: VARCHAR(2500)
+              - column:
+                  name: LAST_UPDATED
+                  type: DATETIME
+              - column:
+                  name: JOB_CONFIGURATION_LOCATION
+                  type: VARCHAR(2500)
+  - changeSet:
+      id: 9
+      author: huunhancit
+      comment: add foreignKey constraints for CAS_BATCH_JOB_EXECUTION_PARAMS table
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: JOB_INSTANCE_ID
+            baseTableName: CAS_BATCH_JOB_EXECUTION
+            constraintName: fk_cas_batch_job_execution
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: JOB_INSTANCE_ID
+            referencedTableName: CAS_BATCH_JOB_INSTANCE
+        - addForeignKeyConstraint:
+            baseColumnNames: JOB_EXECUTION_ID
+            baseTableName: CAS_BATCH_JOB_EXECUTION_PARAMS
+            constraintName: fk_cas_batch_job_execution_params
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: JOB_EXECUTION_ID
+            referencedTableName: CAS_BATCH_JOB_EXECUTION
+
+  - changeSet:
+      id: 10
+      author: huunhancit
+      comment: Create CAS_BATCH_STEP_EXECUTION table
+      changes:
+        - createTable:
+            tableName: CAS_BATCH_STEP_EXECUTION
+            columns:
+              - column:
+                  name: STEP_EXECUTION_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: VERSION
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: STEP_NAME
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: JOB_EXECUTION_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: START_TIME
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: END_TIME
+                  type: DATETIME
+              - column:
+                  name: STATUS
+                  type: VARCHAR(10)
+              - column:
+                  name: COMMIT_COUNT
+                  type: BIGINT
+              - column:
+                  name: READ_COUNT
+                  type: BIGINT
+              - column:
+                  name: FILTER_COUNT
+                  type: BIGINT
+              - column:
+                  name: WRITE_COUNT
+                  type: BIGINT
+              - column:
+                  name: READ_SKIP_COUNT
+                  type: BIGINT
+              - column:
+                  name: WRITE_SKIP_COUNT
+                  type: BIGINT
+              - column:
+                  name: PROCESS_SKIP_COUNT
+                  type: BIGINT
+              - column:
+                  name: ROLLBACK_COUNT
+                  type: BIGINT
+              - column:
+                  name: EXIT_CODE
+                  type: VARCHAR(2500)
+              - column:
+                  name: EXIT_MESSAGE
+                  type: VARCHAR(2500)
+              - column:
+                  name: LAST_UPDATED
+                  type: DATETIME
+  - changeSet:
+      id: 11
+      author: huunhancit
+      comment: add foreignKey constraints for CAS_BATCH_STEP_EXECUTION table
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: JOB_EXECUTION_ID
+            baseTableName: CAS_BATCH_STEP_EXECUTION
+            constraintName: fk_cas_batch_step_execution
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: JOB_EXECUTION_ID
+            referencedTableName: CAS_BATCH_JOB_EXECUTION
+  - changeSet:
+      id: 12
+      author: huunhancit
+      comment: Create CAS_BATCH_JOB_EXECUTION_CONTEXT table
+      changes:
+        - createTable:
+            tableName: CAS_BATCH_JOB_EXECUTION_CONTEXT
+            columns:
+              - column:
+                  name: JOB_EXECUTION_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: SHORT_CONTEXT
+                  type: VARCHAR(2500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: SERIALIZED_CONTEXT
+                  type: TEXT
+  - changeSet:
+      id: 13
+      author: huunhancit
+      comment: add foreignKey constraints for CAS_BATCH_JOB_EXECUTION_CONTEXT table
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: JOB_EXECUTION_ID
+            baseTableName: CAS_BATCH_JOB_EXECUTION_CONTEXT
+            constraintName: fk_cas_batch_job_execution_context
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: JOB_EXECUTION_ID
+            referencedTableName: CAS_BATCH_JOB_EXECUTION
+  - changeSet:
+      id: 14
+      author: huunhancit
+      comment: Create CAS_BATCH_STEP_EXECUTION_CONTEXT table
+      changes:
+        - createTable:
+            tableName: CAS_BATCH_STEP_EXECUTION_CONTEXT
+            columns:
+              - column:
+                  name: STEP_EXECUTION_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: SHORT_CONTEXT
+                  type: VARCHAR(2500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: SERIALIZED_CONTEXT
+                  type: TEXT
+  - changeSet:
+      id: 15
+      author: huunhancit
+      comment: add foreignKey constraints for CAS_BATCH_STEP_EXECUTION_CONTEXT table
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: STEP_EXECUTION_ID
+            baseTableName: CAS_BATCH_STEP_EXECUTION_CONTEXT
+            constraintName: fk_cas_batch_step_execution_context
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+            referencedColumnNames: STEP_EXECUTION_ID
+            referencedTableName: CAS_BATCH_STEP_EXECUTION

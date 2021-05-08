@@ -1,9 +1,12 @@
 package com.codingandshare.dbbk.batch;
 
 import com.codingandshare.dbbk.repositories.TableMetaDataRepository;
+import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.support.IteratorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * Implement class for interface {@link ItemReader}
@@ -20,6 +23,14 @@ public class TableReader implements ItemReader<String> {
   private ItemReader<String> delegate;
 
   /**
+   * Setup reset reader task.
+   */
+  @BeforeStep
+  public void setupStartReader() {
+    this.delegate = null;
+  }
+
+  /**
    * The method read all table need to backup.
    *
    * @return List tables need to backup.
@@ -27,9 +38,10 @@ public class TableReader implements ItemReader<String> {
    */
   @Override
   public String read() throws Exception {
-    if (this.delegate == null || this.delegate.read() == null) {
+    if (this.delegate == null) {
       String databaseName = this.tableMetaDataRepository.getDatabaseName();
-      this.delegate = new IteratorItemReader<>(this.tableMetaDataRepository.getAllTables(databaseName));
+      List<String> tables = this.tableMetaDataRepository.getAllTables(databaseName);
+      this.delegate = new IteratorItemReader<>(tables);
     }
     return this.delegate.read();
   }

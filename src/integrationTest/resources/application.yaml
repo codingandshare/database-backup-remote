@@ -6,9 +6,13 @@ spring:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     url: jdbc:tc:mariadb:10.3:///test?user=root&password=&TC_INITSCRIPT=test_init_mariadb.sql
   batch:
-    initialize-schema: ALWAYS
+    initialize-schema: NEVER
     job:
       enabled: false
-    table-prefix: test.CAS_
+    table-prefix: CAS_BATCH_
+  liquibase:
+    database-change-log-lock-table: CAS_DATABASECHANGELOGLOCK
+    database-change-log-table: CAS_DATABASECHANGELOG
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
 app:
   runSchedule: false
