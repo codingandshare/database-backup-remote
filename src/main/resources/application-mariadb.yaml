@@ -1,9 +1,9 @@
 spring:
   batch:
-    initialize-schema: ALWAYS
+    initialize-schema: NEVER
     job:
       enabled: false
-    table-prefix: CAS_
+    table-prefix: CAS_BATCH_
   config:
     use-legacy-processing: true
   datasource:
@@ -11,6 +11,10 @@ spring:
     username: ${DB_USER:}
     password: ${DB_PASS:}
     driverClassName: org.mariadb.jdbc.Driver
+  liquibase:
+    database-change-log-lock-table: CAS_DATABASECHANGELOGLOCK
+    database-change-log-table: CAS_DATABASECHANGELOG
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
 
 app:
   runSchedule: true

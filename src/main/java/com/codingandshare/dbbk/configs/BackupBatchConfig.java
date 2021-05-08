@@ -79,7 +79,7 @@ public class BackupBatchConfig {
   protected Step backupDataTable() {
     return this.steps
         .get("backupDataTable")
-        .<String, List<String>>chunk(2)
+        .<String, List<String>>chunk(1)
         .reader(tableReader())
         .processor(tableProcessor())
         .writer(tableWriter())
