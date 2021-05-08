@@ -1,8 +1,13 @@
 spring:
+  batch:
+    initialize-schema: ALWAYS
+    job:
+      enabled: false
+    table-prefix: CAS_
   config:
     use-legacy-processing: true
   datasource:
-    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:jcoffee}
+    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:}
     username: ${DB_USER:}
     password: ${DB_PASS:}
     driverClassName: org.mariadb.jdbc.Driver

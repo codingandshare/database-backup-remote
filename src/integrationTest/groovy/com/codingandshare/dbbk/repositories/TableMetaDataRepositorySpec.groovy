@@ -25,7 +25,7 @@ class TableMetaDataRepositorySpec extends Specification {
 
     then: 'Result list tables as expect'
     noExceptionThrown()
-    tables == ['role', 'user', 'user_role']
+    tables == ['BATCH_JOB_EXECUTION', 'BATCH_JOB_EXECUTION_CONTEXT', 'BATCH_JOB_EXECUTION_PARAMS', 'BATCH_JOB_EXECUTION_SEQ', 'BATCH_JOB_INSTANCE', 'BATCH_JOB_SEQ', 'BATCH_STEP_EXECUTION', 'BATCH_STEP_EXECUTION_CONTEXT', 'BATCH_STEP_EXECUTION_SEQ', 'role', 'user', 'user_role']
   }
 
   def 'Verify get all views'() {
