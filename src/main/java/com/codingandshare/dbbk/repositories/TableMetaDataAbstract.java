@@ -1,9 +1,11 @@
 package com.codingandshare.dbbk.repositories;
 
+import com.codingandshare.dbbk.utils.DBBackupConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,10 +38,12 @@ public abstract class TableMetaDataAbstract {
    */
   public List<String> getAllTables(String databaseName) {
     String sql = this.sqlGetAllTables().replace(DB_NAME_EXPRESSION, databaseName);
-    return this.jdbcTemplate.query(
+    List<String> tables = this.jdbcTemplate.query(
         sql,
         (rs, rowNum) -> rs.getString("table_name")
     );
+    tables.removeIf(it -> Arrays.asList(DBBackupConst.META_TABLES).contains(it));
+    return tables;
   }
 
   /**
