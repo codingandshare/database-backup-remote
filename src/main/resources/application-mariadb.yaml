@@ -19,3 +19,4 @@ spring:
 app:
   runSchedule: true
   scheduleBackup: '${SCHEDULE_BACKUP:* 0/23 * * * *}'
+  storageFolder: '${STORAGE_FOLDER}'
