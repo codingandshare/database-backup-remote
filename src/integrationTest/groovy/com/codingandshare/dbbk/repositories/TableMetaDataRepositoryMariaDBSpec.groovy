@@ -12,7 +12,7 @@ import spock.lang.Specification
  */
 @SpringBootTest
 @ActiveProfiles('mariadb-test')
-class TableMetaDataRepositorySpec extends Specification {
+class TableMetaDataRepositoryMariaDBSpec extends Specification {
 
   @Autowired
   private TableMetaDataRepository tableMetaDataRepository
