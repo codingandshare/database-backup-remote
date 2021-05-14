@@ -19,6 +19,12 @@ class TableMetaDataRepositoryMariaDBSpec extends Specification {
 
   private static final String DATABASE_NAME = 'test'
 
+  private static final String PREFIX_TABLE_META = 'test_prefix'
+
+  void setupSpec() {
+    System.setProperty('PREFIX_TABLE_META', PREFIX_TABLE_META)
+  }
+
   def 'Verify get all tables name'() {
     when: 'get all tables'
     List<String> tables = this.tableMetaDataRepository.getAllTables(DATABASE_NAME)
