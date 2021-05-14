@@ -2,11 +2,13 @@ package com.codingandshare.dbbk.repositories;
 
 import com.codingandshare.dbbk.utils.DBBackupConst;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.Connection;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The abstraction class for <code>TableMetaDataRepository</code>.
@@ -17,6 +19,14 @@ import java.util.List;
 public abstract class TableMetaDataAbstract {
 
   private static final String DB_NAME_EXPRESSION = "${DB_NAME}";
+
+  /**
+   * The prefix table meta will get from application properties.
+   * The use can define it and can set value for <pre>PREFIX_TABLE_META</pre> environment.
+   * By default is <pre>CAS_BATCH_</pre>.
+   */
+  @Value("${spring.batch.table-prefix}")
+  private String prefixTableMeta;
 
   @Autowired
   private JdbcTemplate jdbcTemplate;
@@ -31,7 +41,8 @@ public abstract class TableMetaDataAbstract {
   }
 
   /**
-   * The method to get all tables.
+   * The method to get all tables in database.
+   * Exclude all table meta of this service.
    *
    * @param databaseName database name.
    * @return List tables of a database.
@@ -42,7 +53,9 @@ public abstract class TableMetaDataAbstract {
         sql,
         (rs, rowNum) -> rs.getString("table_name")
     );
-    tables.removeIf(it -> Arrays.asList(DBBackupConst.META_TABLES).contains(it));
+    List<String> excludeTables = Arrays.stream(DBBackupConst.META_TABLES)
+        .map(it -> String.format("%s%s", this.prefixTableMeta, it)).collect(Collectors.toList());
+    tables.removeIf(excludeTables::contains);
     return tables;
   }
 

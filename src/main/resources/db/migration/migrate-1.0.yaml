@@ -5,7 +5,7 @@ databaseChangeLog:
       comment: Create and init data for BATCH_STEP_EXECUTION_SEQ table
       changes:
         - createTable:
-            tableName: CAS_BATCH_STEP_EXECUTION_SEQ
+            tableName: ${prefixTable}STEP_EXECUTION_SEQ
             columns:
               - column:
                   name: ID
@@ -17,14 +17,14 @@ databaseChangeLog:
               - column:
                   name: ID
                   value: 0
-            tableName: CAS_BATCH_STEP_EXECUTION_SEQ
+            tableName: ${prefixTable}STEP_EXECUTION_SEQ
   - changeSet:
       id: 2
       author: huunhancit
-      comment: Create and init data for CAS_BATCH_JOB_EXECUTION_SEQ table
+      comment: Create and init data for JOB_EXECUTION_SEQ table
       changes:
         - createTable:
-            tableName: CAS_BATCH_JOB_EXECUTION_SEQ
+            tableName: ${prefixTable}JOB_EXECUTION_SEQ
             columns:
               - column:
                   name: ID
@@ -36,14 +36,14 @@ databaseChangeLog:
               - column:
                   name: ID
                   value: 0
-            tableName: CAS_BATCH_JOB_EXECUTION_SEQ
+            tableName: ${prefixTable}JOB_EXECUTION_SEQ
   - changeSet:
       id: 3
       author: huunhancit
-      comment: Create and init data for CAS_BATCH_JOB_SEQ table
+      comment: Create and init data for JOB_SEQ table
       changes:
         - createTable:
-            tableName: CAS_BATCH_JOB_SEQ
+            tableName: ${prefixTable}JOB_SEQ
             columns:
               - column:
                   name: ID
@@ -55,20 +55,20 @@ databaseChangeLog:
               - column:
                   name: ID
                   value: 0
-            tableName: CAS_BATCH_JOB_SEQ
+            tableName: ${prefixTable}JOB_SEQ
   - changeSet:
       id: 4
       author: huunhancit
-      comment: add unique constraints for CAS_BATCH_STEP_EXECUTION_SEQ, CAS_BATCH_JOB_EXECUTION_SEQ, CAS_BATCH_JOB_SEQ
+      comment: add unique constraints for STEP_EXECUTION_SEQ, CAS_BATCH_JOB_EXECUTION_SEQ, CAS_BATCH_JOB_SEQ
       changes:
         - addUniqueConstraint:
-            tableName: CAS_BATCH_STEP_EXECUTION_SEQ
+            tableName: ${prefixTable}STEP_EXECUTION_SEQ
             columnNames: ID
         - addUniqueConstraint:
-            tableName: CAS_BATCH_JOB_EXECUTION_SEQ
+            tableName: ${prefixTable}JOB_EXECUTION_SEQ
             columnNames: ID
         - addUniqueConstraint:
-            tableName: CAS_BATCH_JOB_SEQ
+            tableName: ${prefixTable}JOB_SEQ
             columnNames: ID
   - changeSet:
       id: 5
@@ -76,7 +76,7 @@ databaseChangeLog:
       comment: Create CAS_BATCH_JOB_INSTANCE table
       changes:
         - createTable:
-            tableName: CAS_BATCH_JOB_INSTANCE
+            tableName: ${prefixTable}JOB_INSTANCE
             columns:
               - column:
                   name: JOB_INSTANCE_ID
@@ -98,18 +98,18 @@ databaseChangeLog:
   - changeSet:
       id: 6
       author: huunhancit
-      comment: add unique constraint for CAS_BATCH_JOB_INSTANCE table
+      comment: add unique constraint for JOB_INSTANCE table
       changes:
         - addUniqueConstraint:
-            tableName: CAS_BATCH_JOB_INSTANCE
+            tableName: ${prefixTable}JOB_INSTANCE
             columnNames: JOB_NAME,JOB_KEY
   - changeSet:
       id: 7
       author: huunhancit
-      comment: Create CAS_BATCH_JOB_EXECUTION_PARAMS table
+      comment: Create JOB_EXECUTION_PARAMS table
       changes:
         - createTable:
-            tableName: CAS_BATCH_JOB_EXECUTION_PARAMS
+            tableName: ${prefixTable}JOB_EXECUTION_PARAMS
             columns:
               - column:
                   name: JOB_EXECUTION_ID
@@ -146,10 +146,10 @@ databaseChangeLog:
   - changeSet:
       id: 8
       author: huunhancit
-      comment: Create CAS_BATCH_JOB_EXECUTION table
+      comment: Create JOB_EXECUTION table
       changes:
         - createTable:
-            tableName: CAS_BATCH_JOB_EXECUTION
+            tableName: ${prefixTable}JOB_EXECUTION
             columns:
               - column:
                   name: JOB_EXECUTION_ID
@@ -196,32 +196,32 @@ databaseChangeLog:
   - changeSet:
       id: 9
       author: huunhancit
-      comment: add foreignKey constraints for CAS_BATCH_JOB_EXECUTION_PARAMS table
+      comment: add foreignKey constraints for JOB_EXECUTION_PARAMS table
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: JOB_INSTANCE_ID
-            baseTableName: CAS_BATCH_JOB_EXECUTION
+            baseTableName: ${prefixTable}JOB_EXECUTION
             constraintName: fk_cas_batch_job_execution
             onDelete: CASCADE
             onUpdate: RESTRICT
             referencedColumnNames: JOB_INSTANCE_ID
-            referencedTableName: CAS_BATCH_JOB_INSTANCE
+            referencedTableName: ${prefixTable}JOB_INSTANCE
         - addForeignKeyConstraint:
             baseColumnNames: JOB_EXECUTION_ID
-            baseTableName: CAS_BATCH_JOB_EXECUTION_PARAMS
+            baseTableName: ${prefixTable}JOB_EXECUTION_PARAMS
             constraintName: fk_cas_batch_job_execution_params
             onDelete: CASCADE
             onUpdate: RESTRICT
             referencedColumnNames: JOB_EXECUTION_ID
-            referencedTableName: CAS_BATCH_JOB_EXECUTION
+            referencedTableName: ${prefixTable}JOB_EXECUTION
 
   - changeSet:
       id: 10
       author: huunhancit
-      comment: Create CAS_BATCH_STEP_EXECUTION table
+      comment: Create STEP_EXECUTION table
       changes:
         - createTable:
-            tableName: CAS_BATCH_STEP_EXECUTION
+            tableName: ${prefixTable}STEP_EXECUTION
             columns:
               - column:
                   name: STEP_EXECUTION_ID
@@ -291,23 +291,23 @@ databaseChangeLog:
   - changeSet:
       id: 11
       author: huunhancit
-      comment: add foreignKey constraints for CAS_BATCH_STEP_EXECUTION table
+      comment: add foreignKey constraints for STEP_EXECUTION table
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: JOB_EXECUTION_ID
-            baseTableName: CAS_BATCH_STEP_EXECUTION
+            baseTableName: ${prefixTable}STEP_EXECUTION
             constraintName: fk_cas_batch_step_execution
             onDelete: CASCADE
             onUpdate: RESTRICT
             referencedColumnNames: JOB_EXECUTION_ID
-            referencedTableName: CAS_BATCH_JOB_EXECUTION
+            referencedTableName: ${prefixTable}JOB_EXECUTION
   - changeSet:
       id: 12
       author: huunhancit
-      comment: Create CAS_BATCH_JOB_EXECUTION_CONTEXT table
+      comment: Create JOB_EXECUTION_CONTEXT table
       changes:
         - createTable:
-            tableName: CAS_BATCH_JOB_EXECUTION_CONTEXT
+            tableName: ${prefixTable}JOB_EXECUTION_CONTEXT
             columns:
               - column:
                   name: JOB_EXECUTION_ID
@@ -326,23 +326,23 @@ databaseChangeLog:
   - changeSet:
       id: 13
       author: huunhancit
-      comment: add foreignKey constraints for CAS_BATCH_JOB_EXECUTION_CONTEXT table
+      comment: add foreignKey constraints for JOB_EXECUTION_CONTEXT table
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: JOB_EXECUTION_ID
-            baseTableName: CAS_BATCH_JOB_EXECUTION_CONTEXT
+            baseTableName: ${prefixTable}JOB_EXECUTION_CONTEXT
             constraintName: fk_cas_batch_job_execution_context
             onDelete: CASCADE
             onUpdate: RESTRICT
             referencedColumnNames: JOB_EXECUTION_ID
-            referencedTableName: CAS_BATCH_JOB_EXECUTION
+            referencedTableName: ${prefixTable}JOB_EXECUTION
   - changeSet:
       id: 14
       author: huunhancit
-      comment: Create CAS_BATCH_STEP_EXECUTION_CONTEXT table
+      comment: Create STEP_EXECUTION_CONTEXT table
       changes:
         - createTable:
-            tableName: CAS_BATCH_STEP_EXECUTION_CONTEXT
+            tableName: ${prefixTable}STEP_EXECUTION_CONTEXT
             columns:
               - column:
                   name: STEP_EXECUTION_ID
@@ -361,13 +361,13 @@ databaseChangeLog:
   - changeSet:
       id: 15
       author: huunhancit
-      comment: add foreignKey constraints for CAS_BATCH_STEP_EXECUTION_CONTEXT table
+      comment: add foreignKey constraints for STEP_EXECUTION_CONTEXT table
       changes:
         - addForeignKeyConstraint:
             baseColumnNames: STEP_EXECUTION_ID
-            baseTableName: CAS_BATCH_STEP_EXECUTION_CONTEXT
+            baseTableName: ${prefixTable}STEP_EXECUTION_CONTEXT
             constraintName: fk_cas_batch_step_execution_context
             onDelete: CASCADE
             onUpdate: RESTRICT
             referencedColumnNames: STEP_EXECUTION_ID
-            referencedTableName: CAS_BATCH_STEP_EXECUTION
+            referencedTableName: ${prefixTable}STEP_EXECUTION
