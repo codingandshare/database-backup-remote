@@ -17,6 +17,8 @@ public final class DBBackupConst {
   public static final String SPRING_PROFILES_ACTIVE = "SPRING_PROFILES_ACTIVE";
 
   public static final String KEY_TABLE_NAME = "TABLE_NAME";
+  public static final String KEY_TABLE = "tables";
+  public static final String KEY_DATABASE = "database";
 
   /**
    * The list tables meta of this service.
@@ -45,4 +47,9 @@ public final class DBBackupConst {
    * The list database type support for current version.
    */
   public static final String[] DB_TYPE_SUPPORT = new String[]{MARIADB};
+
+  /**
+   * The value is default for fetch number records into memory.
+   */
+  public static final int FETCH_SIZE_ROWS = 1000;
 }

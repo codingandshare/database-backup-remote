@@ -1,5 +1,7 @@
 package com.codingandshare.dbbk.repositories;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -96,4 +98,29 @@ public interface TableMetaDataRepository {
    * @return sql script create function
    */
   String generateScriptCreateFunction(String functionName);
+
+  /**
+   * Help to build the value for sql insert from {@link ResultSet}.
+   *
+   * @param resultSet
+   * @return sql insert of one record.
+   * @throws SQLException when build sql insert failed
+   */
+  String buildValueInsertFromResultSet(ResultSet resultSet) throws SQLException;
+
+  /**
+   * Help to get all columns from {@link ResultSet}.
+   *
+   * @param resultSet
+   * @return list columns
+   * @throws SQLException
+   */
+  List<String> getAllColumnFromResultSet(ResultSet resultSet) throws SQLException;
+
+  /**
+   * Help get current version of database.
+   *
+   * @return database version
+   */
+  String getDatabaseVersion();
 }

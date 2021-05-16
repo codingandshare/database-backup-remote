@@ -1,9 +1,6 @@
 package com.codingandshare.dbbk.configs;
 
-import com.codingandshare.dbbk.batch.TableProcessor;
-import com.codingandshare.dbbk.batch.TableReader;
-import com.codingandshare.dbbk.batch.TableWriter;
-import com.codingandshare.dbbk.repositories.TableMetaDataRepository;
+import com.codingandshare.dbbk.services.BackupTableDataBackupTasklet;
 import com.codingandshare.dbbk.services.ReadMetaTasklet;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -11,14 +8,9 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 /**
  * The class config job to backup database.
@@ -37,7 +29,10 @@ public class BackupBatchConfig {
   private StepBuilderFactory steps;
 
   @Autowired
-  private TableMetaDataRepository tableMetaDataRepository;
+  private BackupTableDataBackupTasklet backupTableDataBackupTasklet;
+
+  @Autowired
+  private ReadMetaTasklet readMetaTasklet;
 
   /**
    * Create job to backup database.
@@ -52,7 +47,7 @@ public class BackupBatchConfig {
         .get("backupJob")
         .incrementer(new RunIdIncrementer())
         .start(readMetaDataStep())
-        .next(backupDataTable())
+        .next(backupDataTableStep())
         .build();
   }
 
@@ -66,53 +61,20 @@ public class BackupBatchConfig {
   protected Step readMetaDataStep() {
     return this.steps
         .get("readMetaDataStep")
-        .tasklet(new ReadMetaTasklet(this.tableMetaDataRepository))
+        .tasklet(this.readMetaTasklet)
         .build();
   }
 
   /**
-   * Create {@link Bean} step handle read all data table and convert sql insert and store it to file.
+   * Create {@link Bean} step handle to backup script create and data foreach table.
    *
-   * @return Step {@link #backupDataTable}
+   * @return {@link Step}
    */
   @Bean
-  protected Step backupDataTable() {
+  protected Step backupDataTableStep() {
     return this.steps
-        .get("backupDataTable")
-        .<String, List<String>>chunk(1)
-        .reader(tableReader())
-        .processor(tableProcessor())
-        .writer(tableWriter())
+        .get("backupDataTableStep")
+        .tasklet(this.backupTableDataBackupTasklet)
         .build();
-  }
-
-  /**
-   * Create {@link Bean} step handle {@link ItemReader}.
-   *
-   * @return {@link ItemReader}
-   */
-  @Bean
-  protected ItemReader<String> tableReader() {
-    return new TableReader();
-  }
-
-  /**
-   * Create {@link Bean} step handle {@link ItemProcessor}.
-   *
-   * @return {@link ItemProcessor}
-   */
-  @Bean
-  protected ItemProcessor<String, List<String>> tableProcessor() {
-    return new TableProcessor();
-  }
-
-  /**
-   * Create {@link Bean} step handle {@link ItemWriter}.ReadMetaTasklet.
-   *
-   * @return {@link ItemWriter}
-   */
-  @Bean
-  protected ItemWriter<List<String>> tableWriter() {
-    return new TableWriter();
   }
 }

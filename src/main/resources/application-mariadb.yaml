@@ -21,3 +21,4 @@ app:
   runSchedule: true
   scheduleBackup: '${SCHEDULE_BACKUP:* 0/23 * * * *}'
   storageFolder: '${STORAGE_FOLDER}'
+  backupDataStorage: '${BACKUP_DATA_STORAGE}'
