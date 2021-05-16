@@ -1,11 +1,12 @@
 package com.codingandshare.dbbk.repositories.impl.mariadb;
+
 import com.codingandshare.dbbk.repositories.TableMetaDataAbstract;
 import com.codingandshare.dbbk.repositories.TableMetaDataRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 /**
- * The class implement <code>TableMetaDataRepository</code> interface handle MariaDB.
+ * The class implement {@link TableMetaDataRepository} interface handle MariaDB.
  *
  * @author Nhan Dinh
  * @since 4/23/21
@@ -62,6 +63,36 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   @Override
   protected String sqlGetAllProcedures() {
     return "SHOW PROCEDURE STATUS WHERE DB = '${DB_NAME}'";
+  }
+
+  /**
+   * Default format date on MariaDB.
+   *
+   * @return format date
+   */
+  @Override
+  protected String getDateFormat() {
+    return "yyyy-MM-dd";
+  }
+
+  /**
+   * Default format time on MariaDB.
+   *
+   * @return format time
+   */
+  @Override
+  protected String getTimeFormat() {
+    return "D HH:MM:SS";
+  }
+
+  /**
+   * Default format date time on MariaDB.
+   *
+   * @return format date time
+   */
+  @Override
+  protected String getDateTimeFormat() {
+    return "yyyy-MM-dd HH:MM:SS";
   }
 
   /**
@@ -140,6 +171,19 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
     return this.getJdbcTemplate().queryForObject(
         sql,
         (rs, rowNum) -> rs.getString("Create Function")
+    );
+  }
+
+  /**
+   * Help get current version of MariaDB database.
+   *
+   * @return database version
+   */
+  @Override
+  public String getDatabaseVersion() {
+    return this.getJdbcTemplate().queryForObject(
+        "SELECT VERSION()",
+        (rs, rowNum) -> rs.getString(1)
     );
   }
 }

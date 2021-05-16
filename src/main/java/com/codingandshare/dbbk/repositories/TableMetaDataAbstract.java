@@ -5,10 +5,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.codingandshare.dbbk.utils.SqlUtility.sqlDate;
+import static com.codingandshare.dbbk.utils.SqlUtility.sqlString;
+import static com.codingandshare.dbbk.utils.SqlUtility.sqlTime;
+import static com.codingandshare.dbbk.utils.SqlUtility.sqlTimestamp;
+import static com.codingandshare.dbbk.utils.SqlUtility.SQL_VALUE_NULL;
+import static com.codingandshare.dbbk.utils.SqlUtility.sqlBytes;
+import static com.codingandshare.dbbk.utils.SqlUtility.sqlNumber;
 
 /**
  * The abstraction class for <code>TableMetaDataRepository</code>.
@@ -116,11 +129,97 @@ public abstract class TableMetaDataAbstract {
   }
 
   /**
-   * Abstract method to get sql select all tables from database.
+   * Help to build the value for sql insert from {@link ResultSet}.
    *
-   * @return sql get all tables.
+   * @param resultSet of once record
+   * @return sql insert of one record
+   * @throws SQLException when build sql insert failed
    */
-  protected abstract String sqlGetAllTables();
+  public String buildValueInsertFromResultSet(ResultSet resultSet) throws SQLException {
+    ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+    int columnCount = resultSetMetaData.getColumnCount();
+    List<String> values = new ArrayList<>();
+    for (int i = 1; i <= columnCount; i++) {
+      values.add(this.getValueInsert(resultSet, i));
+    }
+    return String.format("(%s)", String.join(",", values));
+  }
+
+  /**
+   * Build value for insert sql depend on <pre>dbType</pre>.
+   * Handle for some types: dateTime, string, int, date.
+   *
+   * @param resultSet      from JDBC
+   * @param columnPosition position of column need to build value insert
+   * @return value of sql insert
+   * @throws SQLException get value insert sql failed
+   */
+  protected String getValueInsert(ResultSet resultSet, int columnPosition) throws SQLException {
+    int dbType = resultSet.getMetaData().getColumnType(columnPosition);
+    String value;
+    switch (dbType) {
+      case Types.BOOLEAN:
+      case Types.BIT:
+      case Types.DISTINCT:
+      case Types.INTEGER:
+      case Types.SMALLINT:
+      case Types.TINYINT:
+        value = sqlNumber(resultSet.getInt(columnPosition));
+        break;
+      case Types.BIGINT:
+      case Types.NUMERIC:
+      case Types.ROWID:
+        value = sqlNumber(resultSet.getLong(columnPosition));
+        break;
+      case Types.DECIMAL:
+        value = sqlNumber(resultSet.getBigDecimal(columnPosition));
+        break;
+      case Types.DOUBLE:
+        value = sqlNumber(resultSet.getDouble(columnPosition));
+        break;
+      case Types.FLOAT:
+        value = sqlNumber(resultSet.getFloat(columnPosition));
+        break;
+      case Types.BLOB:
+      case Types.BINARY:
+        value = sqlBytes(resultSet.getBytes(columnPosition));
+        break;
+      case Types.NULL:
+        value = SQL_VALUE_NULL;
+        break;
+      case Types.TIME:
+      case Types.TIME_WITH_TIMEZONE:
+        value = sqlTime(resultSet.getTime(columnPosition), this.getTimeFormat());
+        break;
+      case Types.TIMESTAMP:
+      case Types.TIMESTAMP_WITH_TIMEZONE:
+        value = sqlTimestamp(resultSet.getTimestamp(columnPosition), this.getDateTimeFormat());
+        break;
+      case Types.DATE:
+        value = sqlDate(resultSet.getDate(columnPosition), this.getDateFormat());
+        break;
+      default:
+        return sqlString(resultSet.getString(columnPosition));
+    }
+    return value;
+  }
+
+  /**
+   * Help to get all columns from {@link ResultSet}.
+   *
+   * @param resultSet
+   * @return list columns
+   * @throws SQLException
+   */
+  public List<String> getAllColumnFromResultSet(ResultSet resultSet) throws SQLException {
+    ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+    int columnCount = resultSetMetaData.getColumnCount();
+    List<String> columns = new ArrayList<>();
+    for (int i = 1; i <= columnCount; i++) {
+      columns.add(resultSetMetaData.getColumnName(i));
+    }
+    return columns;
+  }
 
   /**
    * Abstract method to get sql select all views from database.
@@ -149,6 +248,34 @@ public abstract class TableMetaDataAbstract {
    * @return sql get all procedures
    */
   protected abstract String sqlGetAllProcedures();
+
+  /**
+   * Abstract method help to get date format depend on database type.
+   *
+   * @return date format
+   */
+  protected abstract String getDateFormat();
+
+  /**
+   * Abstract method help to get time format depend on database type.
+   *
+   * @return time format
+   */
+  protected abstract String getTimeFormat();
+
+  /**
+   * Abstract method help to get date time format depend on database type.
+   *
+   * @return date time format.
+   */
+  protected abstract String getDateTimeFormat();
+
+  /**
+   * Abstract method to get sql select all tables from database.
+   *
+   * @return sql get all tables.
+   */
+  protected abstract String sqlGetAllTables();
 
   /**
    * Expose JdbcTemplate to parent class for using.
