@@ -118,9 +118,59 @@ public interface TableMetaDataRepository {
   List<String> getAllColumnFromResultSet(ResultSet resultSet) throws SQLException;
 
   /**
-   * Help get current version of database.
+   * The method help to get database version current info.
    *
    * @return database version
    */
   String getDatabaseVersion();
+
+  /**
+   * The script header for backup script.
+   * Contain database info, database name.
+   * Script set some meta data.
+   *
+   * @param databaseName
+   * @return script backup header
+   */
+  String generateScriptBackupHeader(String databaseName);
+
+  /**
+   * The method help to build script sql lock table when insert data for that table.
+   *
+   * @param tableName
+   * @return script sql lock table
+   */
+  String generateScriptLockTable(String tableName);
+
+  /**
+   * The script help to build script sql unlock table when release insert data for that table.
+   *
+   * @param tableName
+   * @return script sql unlock table
+   */
+  String generateScriptUnLockTable(String tableName);
+
+  /**
+   * generate sql script drop table if exists.
+   *
+   * @param tableName
+   * @return sql script drop table
+   */
+  String generateSqlDropTable(String tableName);
+
+  /**
+   * generate sql script disable foreign key help disable violate constraints when insert data to table.
+   *
+   * @param tableName
+   * @return sql disable foreign key.
+   */
+  String generateSqlDisableFkKey(String tableName);
+
+  /**
+   * generate sql script enable foreign key after insert data for table finished.
+   *
+   * @param tableName
+   * @return sql enable foreign key.
+   */
+  String generateSqlEnableFkKey(String tableName);
 }

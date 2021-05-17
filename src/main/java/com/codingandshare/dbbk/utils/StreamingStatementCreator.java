@@ -10,7 +10,7 @@ import java.sql.SQLException;
 /**
  * The class help to handle streaming data for {@link org.springframework.jdbc.core.JdbcTemplate}.
  * The fetch size streaming into memory default is 1000 records.
- * The help control out of memory when result data query large.
+ * The class help to control out of memory when result data query large.
  *
  * @author Nhan Dinh
  * @since 5/15/21
@@ -53,7 +53,7 @@ public class StreamingStatementCreator implements PreparedStatementCreator {
    * Help to create statement streaming data with {@link #fetchSize} into memory.
    *
    * @param con
-   * @return
+   * @return {@link PreparedStatement}
    * @throws SQLException
    */
   @Override
