@@ -104,10 +104,20 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
    */
   public String generateScriptCreateTable(String tableName) {
     String sql = String.format("SHOW CREATE TABLE %s", tableName);
-    return this.getJdbcTemplate().queryForObject(
+    String scriptCreateTable = this.getJdbcTemplate().queryForObject(
         sql,
         (rs, rowNum) -> rs.getString("Create Table")
     );
+    StringBuilder script = new StringBuilder();
+    script.append(String.format("-- Script create table %s\n", tableName));
+    String dropIfExists = String.format("DROP TABLE IF EXISTS `%s`\n", tableName);
+    script.append(dropIfExists);
+    script.append("/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
+    script.append("/*!40101 SET character_set_client = utf8 */;\n");
+    script.append(scriptCreateTable);
+    script.append(';');
+    script.append("\n/*!40101 SET character_set_client = @saved_cs_client */;\n");
+    return script.toString();
   }
 
   /**
@@ -185,5 +195,92 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
         "SELECT VERSION()",
         (rs, rowNum) -> rs.getString(1)
     );
+  }
+
+  /**
+   * Generate script sql header for backup script on MariaDB.
+   * Database info, database name, set sql mode, disable check Foreign key, unique when re-table.
+   * Set charset for encoding for backup script.
+   *
+   * @param databaseName
+   * @return sql script backup header
+   */
+  @Override
+  public String generateScriptBackupHeader(String databaseName) {
+    StringBuilder script = new StringBuilder();
+    script.append(String.format("-- Server version: %s\n", this.getDatabaseVersion()));
+    script.append(String.format("-- Database: %s\n", databaseName));
+    script.append("-- ------------------------------------------------------\n");
+    script.append("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n");
+    script.append("/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;\n");
+    script.append("/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;\n");
+    script.append("/*!40101 SET NAMES utf8mb4 */;\n");
+    script.append("/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;\n");
+    script.append("/*!40103 SET TIME_ZONE='+00:00' */;\n");
+    script.append("/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;\n");
+    script.append("/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n");
+    script.append("/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n");
+    script.append("/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;\n");
+    script.append("-- ------------------------------------------------------\n\n");
+    return script.toString();
+  }
+
+  /**
+   * Generate script help to lock table when insert data for table on MariaDB.
+   * Prevent the data is integrity.
+   *
+   * @param tableName
+   * @return sql script lock table
+   */
+  @Override
+  public String generateScriptLockTable(String tableName) {
+    return String.format("LOCK TABLES `%s` WRITE;", tableName);
+  }
+
+  /**
+   * Generate script help to unlock table after insert data for table finished.
+   *
+   * @param tableName
+   * @return sql script unlock table
+   */
+  @Override
+  public String generateScriptUnLockTable(String tableName) {
+    return "UNLOCK TABLES;";
+  }
+
+  /**
+   * Generate script help drop if exists.
+   * Using when re-create table and this sql will execute before script create table.
+   *
+   * @param tableName
+   * @return sql script drop table if exists
+   */
+  @Override
+  public String generateSqlDropTable(String tableName) {
+    return null;
+  }
+
+  /**
+   * Generate sql script disable foreign key using insert data for table.
+   * Disable constraint FK, prevent data violate constraint data.
+   * The sql will execute before insert data into table.
+   *
+   * @param tableName
+   * @return sql script disable FK
+   */
+  @Override
+  public String generateSqlDisableFkKey(String tableName) {
+    return String.format("/*!40000 ALTER TABLE `%s` DISABLE KEYS */;", tableName);
+  }
+
+  /**
+   * Generate sql script enable foreign key after insert data for table finished.
+   *
+   * @param tableName
+   * @return sql script enable FK
+   */
+  @Override
+  public String generateSqlEnableFkKey(String tableName) {
+    return String.format("/*!40000 ALTER TABLE `%s` ENABLE KEYS */;", tableName);
   }
 }

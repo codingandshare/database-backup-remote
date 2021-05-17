@@ -85,7 +85,11 @@ class TableMetaDataRepositoryMariaDBSpec extends Specification {
 
     then: 'Result as expect'
     noExceptionThrown()
-    sqlCreateTable == '''CREATE TABLE `user` (
+    sqlCreateTable == '''-- Script create table user
+DROP TABLE IF EXISTS `user`
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(100) NOT NULL,
   `password` varchar(500) NOT NULL,
@@ -96,7 +100,8 @@ class TableMetaDataRepositoryMariaDBSpec extends Specification {
   `status` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;\n'''
   }
 
   def 'Verify generate script create table when table not existing'() {

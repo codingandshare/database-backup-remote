@@ -51,8 +51,9 @@ public class TableDataServiceImpl implements TableDataService {
     try {
       return new FileWriter(fileNameBackup, false);
     } catch (IOException e) {
-      log.error(String.format("Clean up file %s", fileNameBackup), e);
-      throw new DBBackupException(String.format("Clean up file %s", fileNameBackup));
+      String msg = String.format("Clean up file %s failed", fileNameBackup);
+      log.error(msg, e);
+      throw new DBBackupException(msg);
     }
   }
 
@@ -67,8 +68,10 @@ public class TableDataServiceImpl implements TableDataService {
    */
   @Override
   public void writeScriptDataBackup(String tableName, FileWriter fileWriter) throws IOException {
-    fileWriter.write("LOCK TABLES `entities` WRITE;\n");
-    fileWriter.write("/*!40000 ALTER TABLE `entities` DISABLE KEYS */;\n");
+    fileWriter.write(this.tableMetaDataRepository.generateScriptLockTable(tableName));
+    fileWriter.write("\n");
+    fileWriter.write(this.tableMetaDataRepository.generateSqlDisableFkKey(tableName));
+    fileWriter.write("\n");
     String sqlSelect = String.format("SELECT * FROM %s", tableName);
     AtomicLong rows = new AtomicLong();
     this.jdbcTemplate.query(new StreamingStatementCreator(sqlSelect), rs -> {
@@ -90,8 +93,10 @@ public class TableDataServiceImpl implements TableDataService {
     if (rows.get() > 0) {
       fileWriter.write(";\n");
     }
-    fileWriter.write("/*!40000 ALTER TABLE `entities` ENABLE KEYS */;\n");
-    fileWriter.write("UNLOCK TABLES;\n");
+    fileWriter.write(this.tableMetaDataRepository.generateSqlEnableFkKey(tableName));
+    fileWriter.write("\n");
+    fileWriter.write(this.tableMetaDataRepository.generateScriptUnLockTable(tableName));
+    fileWriter.write("\n");
     fileWriter.flush();
   }
 
@@ -104,14 +109,7 @@ public class TableDataServiceImpl implements TableDataService {
    */
   @Override
   public void writeScriptCreateTable(String tableName, FileWriter fileWriter) throws IOException {
-    fileWriter.write(String.format("-- Script create table %s\n", tableName));
-    String dropIfExists = String.format("DROP TABLE IF EXISTS `%s`\n", tableName);
-    fileWriter.write(dropIfExists);
-    fileWriter.write("/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
-    fileWriter.write("/*!40101 SET character_set_client = utf8 */;\n");
     fileWriter.write(this.tableMetaDataRepository.generateScriptCreateTable(tableName));
-    fileWriter.write("\n");
-    fileWriter.write("/*!40101 SET character_set_client = @saved_cs_client */;\n");
     fileWriter.flush();
   }
 
@@ -125,21 +123,7 @@ public class TableDataServiceImpl implements TableDataService {
    */
   @Override
   public void writeScriptBackupHeader(String databaseName, FileWriter fileWriter) throws IOException {
-    String serverVersion = String.format("-- Server version: %s\n", this.tableMetaDataRepository.getDatabaseVersion());
-    fileWriter.write(serverVersion);
-    fileWriter.write(String.format("-- Database: %s\n", databaseName));
-    fileWriter.write("-- ------------------------------------------------------\n");
-    fileWriter.write("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n");
-    fileWriter.write("/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;\n");
-    fileWriter.write("/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;\n");
-    fileWriter.write("/*!40101 SET NAMES utf8mb4 */;\n");
-    fileWriter.write("/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;\n");
-    fileWriter.write("/*!40103 SET TIME_ZONE='+00:00' */;\n");
-    fileWriter.write("/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;\n");
-    fileWriter.write("/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n");
-    fileWriter.write("/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n");
-    fileWriter.write("/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;\n");
-    fileWriter.write("-- ------------------------------------------------------\n\n");
+    fileWriter.write(this.tableMetaDataRepository.generateScriptBackupHeader(databaseName));
     fileWriter.flush();
   }
 }
