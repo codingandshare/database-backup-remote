@@ -1,7 +1,6 @@
-package com.codingandshare.dbbk.services
+package com.codingandshare.dbbk.test.services
 
 
-import ch.qos.logback.classic.spi.ILoggingEvent
 import com.codingandshare.dbbk.exceptions.DBBackupException
 import com.codingandshare.dbbk.services.impl.TableDataServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles
 import spock.lang.Specification
 
 /**
- * Integration test for {@link com.codingandshare.dbbk.services.impl.TableDataServiceImpl}
+ * Integration test for {@link TableDataServiceImpl}
  */
 @SpringBootTest
 @ActiveProfiles('mariadb-test')

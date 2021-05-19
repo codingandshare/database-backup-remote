@@ -103,10 +103,10 @@ public interface TableMetaDataRepository {
    * Help to build the value for sql insert from {@link ResultSet}.
    *
    * @param resultSet
-   * @return sql insert of one record.
+   * @return List values for insert
    * @throws SQLException when build sql insert failed
    */
-  String buildValueInsertFromResultSet(ResultSet resultSet) throws SQLException;
+  List<String> getValueInsertFromResultSet(ResultSet resultSet) throws SQLException;
 
   /**
    * Help to get all columns from {@link ResultSet}.

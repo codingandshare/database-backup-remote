@@ -1,11 +1,18 @@
-package com.codingandshare.dbbk.repositories
+package com.codingandshare.dbbk.test.repositories
 
+import com.codingandshare.dbbk.repositories.TableMetaDataRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.TransientDataAccessResourceException
 import org.springframework.jdbc.BadSqlGrammarException
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.RowCallbackHandler
 import org.springframework.test.context.ActiveProfiles
+import spock.lang.Ignore
 import spock.lang.Specification
+
+import java.sql.ResultSet
+import java.sql.SQLException
 
 /**
  * Integration test for TableMetaDataRepository
@@ -16,6 +23,9 @@ class TableMetaDataRepositoryMariaDBSpec extends Specification {
 
   @Autowired
   private TableMetaDataRepository tableMetaDataRepository
+
+  @Autowired
+  private JdbcTemplate jdbcTemplate
 
   private static final String DATABASE_NAME = 'test'
 
@@ -31,7 +41,7 @@ class TableMetaDataRepositoryMariaDBSpec extends Specification {
 
     then: 'Result list tables as expect'
     noExceptionThrown()
-    tables == ['role', 'user', 'user_role']
+    tables == ['role', 'test_table', 'user', 'user_role']
   }
 
   def 'Verify get all views'() {
@@ -86,7 +96,7 @@ class TableMetaDataRepositoryMariaDBSpec extends Specification {
     then: 'Result as expect'
     noExceptionThrown()
     sqlCreateTable == '''-- Script create table user
-DROP TABLE IF EXISTS `user`
+DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
@@ -100,7 +110,7 @@ CREATE TABLE `user` (
   `status` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;\n'''
   }
 
@@ -137,7 +147,7 @@ CREATE TABLE `user` (
     thrown(TransientDataAccessResourceException)
   }
 
-  def 'Verify generate script create trigger successfully'(){
+  def 'Verify generate script create trigger successfully'() {
     when: 'generate script create trigger'
     String scriptTrigger = this.tableMetaDataRepository.generateScriptCreateTrigger('before_role_delete')
 
@@ -160,9 +170,10 @@ CREATE TABLE `user` (
 
     then: 'Result as expect'
     noExceptionThrown()
-    scriptProcedure == '''CREATE DEFINER=`root`@`%` PROCEDURE `GetUserName`( OUT userName VARCHAR(20) )
+    scriptProcedure == '''CREATE DEFINER=`root`@`%` PROCEDURE `GetUserName`( OUT userName VARCHAR (20) )
 BEGIN
-    SET userName = 'Nhan Dinh';
+    SET
+userName = 'Nhan Dinh';
 END'''
   }
 
@@ -183,9 +194,114 @@ END'''
     scriptFunction == '''CREATE DEFINER=`root`@`%` FUNCTION `getUserName_Func`() RETURNS varchar(20) CHARSET latin1
     DETERMINISTIC
 BEGIN
-    DECLARE userName VARCHAR(20);
-    SET userName = 'Nhan Dinh';
-    RETURN (userName);
+    DECLARE
+userName VARCHAR(20);
+    SET
+userName = 'Nhan Dinh';
+RETURN (userName);
 END'''
+  }
+
+  def 'Verify get list values for insert success'() {
+    when: 'get list values insert'
+    List<List<String>> values = new ArrayList<>();
+    this.jdbcTemplate.query("SELECT * FROM `user`", new RowCallbackHandler() {
+      @Override
+      void processRow(ResultSet rs) throws SQLException {
+        values.add(tableMetaDataRepository.getValueInsertFromResultSet(rs))
+      }
+    })
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    values
+    values.size() == 2
+    String.join(',', values.first()) == "1,'huunhancit','password','Dinh','Nhan','huunhancit@gmail.com',1,1"
+    String.join(',', values[1]) == "2,'dhnhan','password','Dinh','Nhan','dhnhan@gmail.com',1,1"
+  }
+
+  def 'Verify get list values for insert with date, datetime, time'() {
+    when: 'get list values insert'
+    List<List<String>> values = new ArrayList<>();
+    this.jdbcTemplate.query("SELECT * FROM `test_table`", new RowCallbackHandler() {
+      @Override
+      void processRow(ResultSet rs) throws SQLException {
+        values.add(tableMetaDataRepository.getValueInsertFromResultSet(rs))
+      }
+    })
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    values
+    values.size() == 1
+    String.join(',', values.first()) == "'2020-10-19 03:10:00','03:10:00','2020-10-19'"
+  }
+
+  def 'Verify generate script drop table'() {
+    when: 'generate script drop table'
+    String scriptDropTable = this.tableMetaDataRepository.generateSqlDropTable('user')
+
+    then: 'result as expect'
+    noExceptionThrown()
+    scriptDropTable == "DROP TABLE IF EXISTS `user`"
+  }
+
+  @Ignore
+  def 'Verify generate script header for backup'() {
+    when: 'generate script header'
+    String header = this.tableMetaDataRepository.generateScriptBackupHeader('test')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    header == '''-- Server version: 10.3.28-MariaDB-1:10.3.28+maria~focal
+-- Database: test
+-- ------------------------------------------------------
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+-- ------------------------------------------------------\n\n'''
+  }
+
+  def 'Verify generate script unlock table'() {
+    when: 'generate script unlock table'
+    String scriptUnlockTable = this.tableMetaDataRepository.generateScriptUnLockTable('user')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptUnlockTable == 'UNLOCK TABLES;'
+  }
+
+  def 'Verify generate script lock table'() {
+    when: 'Generate script lock table'
+    String scriptLockTable = this.tableMetaDataRepository.generateScriptLockTable('nhan_table')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptLockTable == 'LOCK TABLES `nhan_table` WRITE;'
+  }
+
+  def 'Verify generate script disable FK'() {
+    when: 'Generate script disable FK'
+    String scriptDisableFK = this.tableMetaDataRepository.generateSqlDisableFkKey('users')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptDisableFK == '/*!40000 ALTER TABLE `users` DISABLE KEYS */;'
+  }
+
+  def 'Verify generate script enable FK'() {
+    when: 'Generate script enable FK'
+    String scriptEnableFk = this.tableMetaDataRepository.generateSqlEnableFkKey('roles')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptEnableFk == '/*!40000 ALTER TABLE `roles` ENABLE KEYS */;'
   }
 }
