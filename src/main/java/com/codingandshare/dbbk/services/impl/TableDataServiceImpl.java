@@ -42,8 +42,8 @@ public class TableDataServiceImpl implements TableDataService {
    * The ${storageFolder} user can config it and default is /tmp folder.
    *
    * @param databaseName database name need to backup
-   * @throws DBBackupException setup file backup failed
    * @return {@link FileWriter}
+   * @throws DBBackupException setup file backup failed
    */
   @Override
   public FileWriter setupFileBackup(String databaseName) {
@@ -82,7 +82,8 @@ public class TableDataServiceImpl implements TableDataService {
         } else {
           fileWriter.append(",\n");
         }
-        fileWriter.write(this.tableMetaDataRepository.buildValueInsertFromResultSet(rs));
+        fileWriter.write(String.format("(%s)", String.join(",",
+            this.tableMetaDataRepository.getValueInsertFromResultSet(rs))));
         if (rows.getAndIncrement() % DBBackupConst.FETCH_SIZE_ROWS == 0) {
           fileWriter.flush();
         }

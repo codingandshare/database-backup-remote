@@ -82,7 +82,7 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
    */
   @Override
   protected String getTimeFormat() {
-    return "D HH:MM:SS";
+    return "HH:mm:ss";
   }
 
   /**
@@ -110,8 +110,8 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
     );
     StringBuilder script = new StringBuilder();
     script.append(String.format("-- Script create table %s\n", tableName));
-    String dropIfExists = String.format("DROP TABLE IF EXISTS `%s`\n", tableName);
-    script.append(dropIfExists);
+    script.append(this.generateSqlDropTable(tableName));
+    script.append(";\n");
     script.append("/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
     script.append("/*!40101 SET character_set_client = utf8 */;\n");
     script.append(scriptCreateTable);
@@ -257,7 +257,7 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
    */
   @Override
   public String generateSqlDropTable(String tableName) {
-    return null;
+    return String.format("DROP TABLE IF EXISTS `%s`", tableName);
   }
 
   /**

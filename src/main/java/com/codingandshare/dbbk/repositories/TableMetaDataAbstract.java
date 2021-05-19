@@ -135,14 +135,14 @@ public abstract class TableMetaDataAbstract {
    * @return sql insert of one record
    * @throws SQLException when build sql insert failed
    */
-  public String buildValueInsertFromResultSet(ResultSet resultSet) throws SQLException {
+  public List<String> getValueInsertFromResultSet(ResultSet resultSet) throws SQLException {
     ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
     int columnCount = resultSetMetaData.getColumnCount();
     List<String> values = new ArrayList<>();
     for (int i = 1; i <= columnCount; i++) {
       values.add(this.getValueInsert(resultSet, i));
     }
-    return String.format("(%s)", String.join(",", values));
+    return values;
   }
 
   /**

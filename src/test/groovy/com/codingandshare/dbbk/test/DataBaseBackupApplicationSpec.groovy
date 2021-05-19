@@ -1,5 +1,6 @@
-package com.codingandshare.dbbk
+package com.codingandshare.dbbk.test
 
+import com.codingandshare.dbbk.DatabaseBackupApplication
 import com.codingandshare.dbbk.exceptions.ValidateException
 import spock.lang.Specification
 

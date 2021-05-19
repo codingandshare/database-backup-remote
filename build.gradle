@@ -10,7 +10,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 apply from: 'gradle/checkstyle.gradle'
-apply from: 'gradle/integration-test.gradle'
+apply from: 'gradle/jacoco.gradle'
 
 repositories {
   mavenCentral()
