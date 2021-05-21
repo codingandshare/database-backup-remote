@@ -8,7 +8,6 @@ import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowCallbackHandler
 import org.springframework.test.context.ActiveProfiles
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.sql.ResultSet
@@ -246,15 +245,13 @@ END'''
     scriptDropTable == "DROP TABLE IF EXISTS `user`"
   }
 
-  @Ignore
   def 'Verify generate script header for backup'() {
     when: 'generate script header'
     String header = this.tableMetaDataRepository.generateScriptBackupHeader('test')
 
     then: 'Result as expect'
     noExceptionThrown()
-    header == '''-- Server version: 10.3.28-MariaDB-1:10.3.28+maria~focal
--- Database: test
+    header.contains('''-- Database: test
 -- ------------------------------------------------------
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -266,7 +263,7 @@ END'''
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
--- ------------------------------------------------------\n\n'''
+-- ------------------------------------------------------\n\n''')
   }
 
   def 'Verify generate script unlock table'() {
