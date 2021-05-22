@@ -147,6 +147,7 @@ public abstract class TableMetaDataAbstract {
   /**
    * Build value for insert sql depend on <pre>dbType</pre>.
    * Handle for some types: dateTime, string, int, date.
+   * Currently only support mariadb/mysql so this version unsupport Types.ROWID for Oracle.
    *
    * @param resultSet      from JDBC
    * @param columnPosition position of column need to build value insert
@@ -167,7 +168,6 @@ public abstract class TableMetaDataAbstract {
         break;
       case Types.BIGINT:
       case Types.NUMERIC:
-      case Types.ROWID:
         value = sqlNumber(resultSet.getLong(columnPosition));
         break;
       case Types.DECIMAL:
@@ -183,6 +183,7 @@ public abstract class TableMetaDataAbstract {
         break;
       case Types.BLOB:
       case Types.BINARY:
+      case Types.VARBINARY:
         value = sqlBytes(resultSet.getBytes(columnPosition));
         break;
       case Types.TIME:
