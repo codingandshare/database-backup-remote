@@ -40,7 +40,7 @@ class TableMetaDataRepositoryMariaDBSpec extends Specification {
 
     then: 'Result list tables as expect'
     noExceptionThrown()
-    tables == ['role', 'test_table', 'user', 'user_role']
+    tables == ['role', 'test_data_binary', 'test_data_number', 'test_table', 'user', 'user_role']
   }
 
   def 'Verify get all views'() {
@@ -300,5 +300,61 @@ END'''
     then: 'Result as expect'
     noExceptionThrown()
     scriptEnableFk == '/*!40000 ALTER TABLE `roles` ENABLE KEYS */;'
+  }
+
+  def 'Verify generate get list values for insert when table contain column number'() {
+    when: 'get list values for insert'
+    List<List<String>> values = new ArrayList<>();
+    this.jdbcTemplate.query("SELECT * FROM `test_data_number`", new RowCallbackHandler() {
+      @Override
+      void processRow(ResultSet rs) throws SQLException {
+        values.add(tableMetaDataRepository.getValueInsertFromResultSet(rs))
+      }
+    })
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    values
+    values.size() == 3
+    String.join(',', values.first()) == '1.0,1.00,NULL,1.0'
+    String.join(',', values[1]) == "NULL,1.00,'Nhan Dinh',1.0"
+    String.join(',', values[2]) == '1.0,NULL,NULL,1.0'
+  }
+
+  def 'Verify gender list values insert when table contain column BLOB'() {
+    when: 'get list values for insert'
+    List<List<String>> values = new ArrayList<>();
+    this.jdbcTemplate.query("SELECT * FROM `test_data_binary`", new RowCallbackHandler() {
+      @Override
+      void processRow(ResultSet rs) throws SQLException {
+        values.add(tableMetaDataRepository.getValueInsertFromResultSet(rs))
+      }
+    })
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    values
+    values.size() == 2
+    String.join(',', values.first()) == 'NULL'
+    String.join(',', values[1]) == "'STRING'"
+  }
+
+  def 'Verify get all columns from ResultSet'() {
+    when: 'Get all columns'
+    List<String> columns = new ArrayList<>();
+    this.jdbcTemplate.query("SELECT * FROM `test_data_number`", new RowCallbackHandler() {
+      @Override
+      void processRow(ResultSet rs) throws SQLException {
+        if (columns.isEmpty()) {
+          columns = tableMetaDataRepository.getAllColumnFromResultSet(rs)
+        }
+      }
+    })
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    !columns.isEmpty()
+    columns.size() == 4
+    columns == ['c1', 'c2', 'c3', 'c4']
   }
 }

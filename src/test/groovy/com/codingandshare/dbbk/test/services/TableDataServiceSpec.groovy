@@ -153,4 +153,26 @@ CREATE TABLE `user` (
     cleanup:
     file.delete()
   }
+
+  def 'Verify write data backup to file with table is empty'() {
+    given: 'Setup data'
+    FileWriter fileWriter = this.tableDataService.setupFileBackup('test')
+
+    when: 'Write script header to file'
+    this.tableDataService.writeScriptDataBackup('role', fileWriter)
+    fileWriter.close()
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    File file = new File('/tmp/test.sql')
+    file.isFile()
+    file.text == '''LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
+UNLOCK TABLES;
+'''
+    cleanup:
+    file.delete()
+
+  }
 }

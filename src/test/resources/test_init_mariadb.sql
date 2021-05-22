@@ -48,6 +48,29 @@ CREATE TABLE `test_table`
 INSERT INTO `test_table` (updated_time, s_time, s_date)
 values ('2020-10-19 03:10:00', '03:10:00', '2020-10-19');
 
+CREATE TABLE `test_data_number`
+(
+    c1 FLOAT,
+    c2 DECIMAL(10, 2),
+    c3 varchar(100),
+    c4 DOUBLE
+);
+
+INSERT INTO test_data_number(c1, c2, c3, c4)
+VALUES (1, 1, NULL, 1),
+       (NULL, 1, 'Nhan Dinh', 1),
+       (1, NULL, NULL, 1);
+
+CREATE TABLE test_data_binary
+(
+    c1 BLOB
+);
+
+INSERT INTO test_data_binary(c1)
+VALUES (NULL),
+       ('STRING');
+
+
 CREATE TABLE `user_role`
 (
     `user_id` int(11) NOT NULL,
