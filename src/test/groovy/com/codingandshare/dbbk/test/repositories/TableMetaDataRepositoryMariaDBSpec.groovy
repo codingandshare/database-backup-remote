@@ -316,9 +316,9 @@ END'''
     noExceptionThrown()
     values
     values.size() == 3
-    String.join(',', values.first()) == '1.0,1.00,NULL,1.0'
-    String.join(',', values[1]) == "NULL,1.00,'Nhan Dinh',1.0"
-    String.join(',', values[2]) == '1.0,NULL,NULL,1.0'
+    String.join(',', values.first()) == '1.0,1.00,NULL,1.0,1'
+    String.join(',', values[1]) == "NULL,1.00,'Nhan Dinh',1.0,1"
+    String.join(',', values[2]) == '1.0,NULL,NULL,1.0,1'
   }
 
   def 'Verify gender list values insert when table contain column BLOB'() {
@@ -336,7 +336,7 @@ END'''
     values
     values.size() == 2
     String.join(',', values.first()) == 'NULL'
-    String.join(',', values[1]) == "'STRING'"
+    String.join(',', values[1]) == "535452494E47"
   }
 
   def 'Verify get all columns from ResultSet'() {
@@ -354,7 +354,7 @@ END'''
     then: 'Result as expect'
     noExceptionThrown()
     !columns.isEmpty()
-    columns.size() == 4
-    columns == ['c1', 'c2', 'c3', 'c4']
+    columns.size() == 5
+    columns == ['c1', 'c2', 'c3', 'c4', 'c5']
   }
 }

@@ -53,13 +53,14 @@ CREATE TABLE `test_data_number`
     c1 FLOAT,
     c2 DECIMAL(10, 2),
     c3 varchar(100),
-    c4 DOUBLE
+    c4 DOUBLE,
+    c5 BIGINT
 );
 
-INSERT INTO test_data_number(c1, c2, c3, c4)
-VALUES (1, 1, NULL, 1),
-       (NULL, 1, 'Nhan Dinh', 1),
-       (1, NULL, NULL, 1);
+INSERT INTO test_data_number(c1, c2, c3, c4, c5)
+VALUES (1, 1, NULL, 1, 1),
+       (NULL, 1, 'Nhan Dinh', 1, 1),
+       (1, NULL, NULL, 1, 1);
 
 CREATE TABLE test_data_binary
 (
