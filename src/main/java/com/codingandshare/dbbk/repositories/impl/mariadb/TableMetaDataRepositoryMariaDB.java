@@ -92,7 +92,7 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
    */
   @Override
   protected String getDateTimeFormat() {
-    return "yyyy-MM-dd HH:MM:SS";
+    return "yyyy-MM-dd HH:mm:ss";
   }
 
   /**

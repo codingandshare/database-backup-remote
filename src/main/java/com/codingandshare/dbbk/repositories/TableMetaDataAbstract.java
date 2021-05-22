@@ -19,7 +19,6 @@ import static com.codingandshare.dbbk.utils.SqlUtility.sqlDate;
 import static com.codingandshare.dbbk.utils.SqlUtility.sqlString;
 import static com.codingandshare.dbbk.utils.SqlUtility.sqlTime;
 import static com.codingandshare.dbbk.utils.SqlUtility.sqlTimestamp;
-import static com.codingandshare.dbbk.utils.SqlUtility.SQL_VALUE_NULL;
 import static com.codingandshare.dbbk.utils.SqlUtility.sqlBytes;
 import static com.codingandshare.dbbk.utils.SqlUtility.sqlNumber;
 
@@ -177,15 +176,14 @@ public abstract class TableMetaDataAbstract {
       case Types.DOUBLE:
         value = sqlNumber(resultSet.getDouble(columnPosition));
         break;
+      case Types.REAL:
       case Types.FLOAT:
-        value = sqlNumber(resultSet.getFloat(columnPosition));
+        float floatValue = resultSet.getFloat(columnPosition);
+        value = sqlNumber(resultSet.wasNull() ? null : floatValue);
         break;
       case Types.BLOB:
       case Types.BINARY:
         value = sqlBytes(resultSet.getBytes(columnPosition));
-        break;
-      case Types.NULL:
-        value = SQL_VALUE_NULL;
         break;
       case Types.TIME:
       case Types.TIME_WITH_TIMEZONE:

@@ -87,8 +87,7 @@ public class TableDataServiceImpl implements TableDataService {
         if (rows.getAndIncrement() % DBBackupConst.FETCH_SIZE_ROWS == 0) {
           fileWriter.flush();
         }
-      } catch (IOException e) {
-        throw new RuntimeException(String.format("Build query insert for %s table failed", tableName), e);
+      } catch (IOException ignored) {
       }
     });
     if (rows.get() > 0) {
