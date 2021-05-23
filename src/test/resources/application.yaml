@@ -16,5 +16,6 @@ spring:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
     parameters.prefixTable: '${PREFIX_TABLE_META:CAS_BATCH_}'
 app:
-  runSchedule: false
+  scheduleBackup: '-'
+  runSchedule: true
   storageFolder: '/tmp'
