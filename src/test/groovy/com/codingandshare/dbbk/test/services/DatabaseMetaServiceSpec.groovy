@@ -64,5 +64,8 @@ END;
     file.exists()
     file.isFile()
     file.text.isEmpty()
+
+    cleanup:
+    file.delete()
   }
 }
