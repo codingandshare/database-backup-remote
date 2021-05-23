@@ -375,4 +375,13 @@ END'''
     noExceptionThrown()
     scriptDropFunction == 'DROP FUNCTION IF EXISTS `getUserName_Func`;'
   }
+
+  def 'Verify generate script drop exists for trigger'() {
+    when: 'Generate script drop trigger'
+    String scriptDropTrigger = this.tableMetaDataRepository.generateSqlDropIfExistsTrigger('before_role_delete')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptDropTrigger == 'DROP TRIGGER IF EXISTS `before_role_delete`;'
+  }
 }

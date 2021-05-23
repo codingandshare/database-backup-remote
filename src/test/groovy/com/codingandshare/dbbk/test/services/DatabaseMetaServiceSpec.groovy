@@ -33,7 +33,6 @@ class DatabaseMetaServiceSpec extends BaseSpecification {
     File file = new File('/tmp/test.sql')
     file.exists()
     file.isFile()
-    println file.text
     file.text == '''-- Script create procedure
 
 DROP PROCEDURE IF EXISTS `GetUserName`;
@@ -42,6 +41,7 @@ BEGIN
     SET
 userName = 'Nhan Dinh';
 END;
+
 '''
 
     cleanup:
@@ -92,6 +92,7 @@ userName VARCHAR(20);
 userName = 'Nhan Dinh';
 RETURN (userName);
 END;
+
 '''
 
     cleanup:
@@ -115,5 +116,44 @@ END;
 
     cleanup:
     file.delete()
+  }
+
+
+  def 'Verify write script create trigger successfully'() {
+    given: 'Setup data'
+    FileWriter fileWriter = this.tableDataService.setupFileBackup('test')
+
+    when: 'Write script create trigger'
+    this.databaseMetaService.writeScriptCreateTriggers(['before_role_delete'], fileWriter)
+    fileWriter.close()
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    File file = new File('/tmp/test.sql')
+    file.exists()
+    file.isFile()
+    file.text == '''-- Script create triggers
+
+DROP TRIGGER IF EXISTS `before_role_delete`;
+CREATE DEFINER=`root`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR EACH ROW DELETE FROM user_role WHERE role_id = OLD.id;
+'''
+    cleanup:
+    file.delete()
+  }
+
+  def 'Verify write script create trigger when empty triggers'() {
+    given: 'Setup data'
+    FileWriter fileWriter = this.tableDataService.setupFileBackup('test')
+
+    when: 'Write script create trigger'
+    this.databaseMetaService.writeScriptCreateTriggers([], fileWriter)
+    fileWriter.close()
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    File file = new File('/tmp/test.sql')
+    file.exists()
+    file.isFile()
+    file.text.isEmpty()
   }
 }

@@ -43,6 +43,7 @@ public class DatabaseMetaServiceImpl implements DatabaseMetaService {
       fileWriter.write(scriptCreateProcedure);
       fileWriter.write(";\n");
     }
+    fileWriter.write("\n");
     fileWriter.flush();
   }
 
@@ -66,6 +67,32 @@ public class DatabaseMetaServiceImpl implements DatabaseMetaService {
       fileWriter.write("\n");
       String scriptCreateFunction = this.tableMetaDataRepository.generateScriptCreateFunction(function);
       fileWriter.write(scriptCreateFunction);
+      fileWriter.write(";\n");
+    }
+    fileWriter.write("\n");
+    fileWriter.flush();
+  }
+
+  /**
+   * Generate the script create foreach trigger and write it to file.
+   *
+   * @param triggers   list triggers need to backup
+   * @param fileWriter {@link FileWriter}
+   * @throws IOException write script to file failed
+   */
+  @Override
+  public void writeScriptCreateTriggers(List<String> triggers, FileWriter fileWriter) throws IOException {
+    if (triggers.isEmpty()) {
+      return;
+    } else {
+      fileWriter.write("-- Script create triggers\n\n");
+    }
+    for (String trigger : triggers) {
+      String scriptDropTrigger = this.tableMetaDataRepository.generateSqlDropIfExistsTrigger(trigger);
+      fileWriter.write(scriptDropTrigger);
+      fileWriter.write("\n");
+      String scriptCreateTrigger = this.tableMetaDataRepository.generateScriptCreateTrigger(trigger);
+      fileWriter.write(scriptCreateTrigger);
       fileWriter.write(";\n");
     }
     fileWriter.flush();
