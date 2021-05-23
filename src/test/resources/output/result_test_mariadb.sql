@@ -142,6 +142,7 @@ BEGIN
     SET
 userName = 'Nhan Dinh';
 END;
+
 -- Script create functions
 
 DROP FUNCTION IF EXISTS `getUserName_Func`;
@@ -154,3 +155,8 @@ userName VARCHAR(20);
 userName = 'Nhan Dinh';
 RETURN (userName);
 END;
+
+-- Script create triggers
+
+DROP TRIGGER IF EXISTS `before_role_delete`;
+CREATE DEFINER=`root`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR EACH ROW DELETE FROM user_role WHERE role_id = OLD.id;

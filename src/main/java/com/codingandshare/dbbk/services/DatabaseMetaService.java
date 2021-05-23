@@ -26,9 +26,18 @@ public interface DatabaseMetaService {
   /**
    * Generate the script create foreach function and write it to file.
    *
-   * @param functions list functions need to backup.
+   * @param functions  list functions need to backup.
    * @param fileWriter {@link FileWriter}
    * @throws IOException write script to file failed
    */
   void writeScriptCreateFunctions(List<String> functions, FileWriter fileWriter) throws IOException;
+
+  /**
+   * Generate the script create foreach trigger and write it to file.
+   *
+   * @param triggers   list triggers need to backup
+   * @param fileWriter {@link FileWriter}
+   * @throws IOException write script to file failed
+   */
+  void writeScriptCreateTriggers(List<String> triggers, FileWriter fileWriter) throws IOException;
 }

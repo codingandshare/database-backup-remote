@@ -189,4 +189,12 @@ public interface TableMetaDataRepository {
    * @return sql script drop function.
    */
   String generateSqlDropIfExistsFunction(String functionName);
+
+  /**
+   * Generate sql script help to drop if exists trigger.
+   *
+   * @param triggerName
+   * @return sql script drop trigger
+   */
+  String generateSqlDropIfExistsTrigger(String triggerName);
 }
