@@ -384,4 +384,13 @@ END'''
     noExceptionThrown()
     scriptDropTrigger == 'DROP TRIGGER IF EXISTS `before_role_delete`;'
   }
+
+  def 'Verify generate script drop exists for view'() {
+    when: 'Generate script drop view'
+    String scriptDropView = this.tableMetaDataRepository.generateSqlDropIfExistsView('test')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptDropView == 'DROP VIEW IF EXISTS `test`;'
+  }
 }

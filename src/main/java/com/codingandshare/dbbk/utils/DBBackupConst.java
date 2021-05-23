@@ -21,6 +21,7 @@ public final class DBBackupConst {
   public static final String KEY_PROCEDURES = "procedures";
   public static final String KEY_FUNCTIONS = "functions";
   public static final String KEY_TRIGGERS = "triggers";
+  public static final String KEY_VIEWS = "views";
   public static final String KEY_FILE = "file";
 
   /**
@@ -42,7 +43,7 @@ public final class DBBackupConst {
   };
 
   /**
-   * Constant databse type for mariadb.
+   * Constant database type for mariadb.
    */
   public static final String MARIADB = "mariadb";
 

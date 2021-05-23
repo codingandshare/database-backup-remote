@@ -197,4 +197,12 @@ public interface TableMetaDataRepository {
    * @return sql script drop trigger
    */
   String generateSqlDropIfExistsTrigger(String triggerName);
+
+  /**
+   * Generate sql script help to drop if exists view.
+   *
+   * @param viewName
+   * @return sql script drop view
+   */
+  String generateSqlDropIfExistsView(String viewName);
 }

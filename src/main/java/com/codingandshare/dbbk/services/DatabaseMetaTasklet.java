@@ -33,6 +33,7 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
   private List<String> procedures;
   private List<String> functions;
   private List<String> triggers;
+  private List<String> views;
   private FileWriter fileWriter;
 
   /**
@@ -41,6 +42,7 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
    * Get list procedures from {@link ReadMetaTasklet} step.
    * Get list functions from {@link ReadMetaTasklet} step.
    * Get list triggers from {@link ReadMetaTasklet} step.
+   * Get list views from {@link ReadMetaTasklet} step.
    * Get {@link FileWriter} instance from {@link BackupTableDataBackupTasklet} step.
    *
    * @param stepExecution
@@ -51,6 +53,7 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
     this.procedures = (List<String>) executionContext.get(DBBackupConst.KEY_PROCEDURES);
     this.functions = (List<String>) executionContext.get(DBBackupConst.KEY_FUNCTIONS);
     this.triggers = (List<String>) executionContext.get(DBBackupConst.KEY_TRIGGERS);
+    this.views = (List<String>) executionContext.get(DBBackupConst.KEY_VIEWS);
     this.fileWriter = (FileWriter) executionContext.get(DBBackupConst.KEY_FILE);
   }
 
@@ -77,6 +80,7 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
    * - Backup script create for procedures.
    * - Backup script create for functions.
    * - Backup script create for triggers.
+   * - Backup script create for views.
    *
    * @param contribution
    * @param chunkContext
@@ -95,6 +99,9 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
     log.debug("Backup script create trigger starting...");
     this.databaseMetaService.writeScriptCreateTriggers(this.triggers, this.fileWriter);
     log.debug("Backup script create trigger done.");
+    log.debug("Backup script create view starting...");
+    this.databaseMetaService.writeScriptCreateViews(this.views, this.fileWriter);
+    log.debug("Backup script create view done.");
     log.info("Tasklet database meta is done.");
     return RepeatStatus.FINISHED;
   }

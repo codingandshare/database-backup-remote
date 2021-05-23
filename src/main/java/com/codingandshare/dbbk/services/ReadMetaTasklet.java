@@ -88,7 +88,7 @@ public class ReadMetaTasklet implements Tasklet, StepExecutionListener {
         .getJobExecution()
         .getExecutionContext();
     executionContext.put(DBBackupConst.KEY_DATABASE, this.databaseName);
-    executionContext.put("views", this.views);
+    executionContext.put(DBBackupConst.KEY_VIEWS, this.views);
     executionContext.put(DBBackupConst.KEY_TABLE, this.tables);
     executionContext.put(DBBackupConst.KEY_TRIGGERS, this.triggers);
     executionContext.put(DBBackupConst.KEY_FUNCTIONS, this.functions);

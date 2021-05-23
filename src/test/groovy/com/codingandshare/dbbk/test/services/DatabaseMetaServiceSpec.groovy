@@ -136,6 +136,7 @@ END;
 
 DROP TRIGGER IF EXISTS `before_role_delete`;
 CREATE DEFINER=`root`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR EACH ROW DELETE FROM user_role WHERE role_id = OLD.id;
+
 '''
     cleanup:
     file.delete()
@@ -155,5 +156,27 @@ CREATE DEFINER=`root`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR E
     file.exists()
     file.isFile()
     file.text.isEmpty()
+  }
+
+  def 'Verify write script create view successfully'() {
+    given: 'Setup data'
+    FileWriter fileWriter = this.tableDataService.setupFileBackup('test')
+
+    when: 'Write script create view'
+    this.databaseMetaService.writeScriptCreateViews(['user_view'], fileWriter)
+    fileWriter.close()
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    File file = new File('/tmp/test.sql')
+    file.exists()
+    file.isFile()
+    println file.text
+    file.text == '''-- Script create views
+
+DROP VIEW IF EXISTS `user_view`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `user_view` AS select `u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`password` AS `password`,`u`.`first_name` AS `first_name`,`u`.`last_name` AS `last_name`,`u`.`email` AS `email`,`u`.`gender` AS `gender`,`u`.`status` AS `status`,`r`.`role_name` AS `role_name` from ((`user` `u` join `user_role` `u_role` on(`u`.`id` = `u_role`.`user_id`)) join `role` `r` on(`r`.`id` = `u_role`.`role_id`));
+
+'''
   }
 }
