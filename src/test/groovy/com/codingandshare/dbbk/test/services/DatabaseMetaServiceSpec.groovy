@@ -25,7 +25,7 @@ class DatabaseMetaServiceSpec extends BaseSpecification {
     FileWriter fileWriter = this.tableDataService.setupFileBackup('test')
 
     when: 'write script to file'
-    this.databaseMetaService.writeScriptCreateProcedure(['GetUserName'], fileWriter)
+    this.databaseMetaService.writeScriptCreateProcedures(['GetUserName'], fileWriter)
     fileWriter.close()
 
     then: 'Result as expect'
@@ -42,8 +42,6 @@ BEGIN
     SET
 userName = 'Nhan Dinh';
 END;
-
-
 '''
 
     cleanup:
@@ -55,7 +53,57 @@ END;
     FileWriter fileWriter = this.tableDataService.setupFileBackup('test')
 
     when: 'write script create procedure'
-    this.databaseMetaService.writeScriptCreateProcedure([], fileWriter)
+    this.databaseMetaService.writeScriptCreateProcedures([], fileWriter)
+    fileWriter.close()
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    File file = new File('/tmp/test.sql')
+    file.exists()
+    file.isFile()
+    file.text.isEmpty()
+
+    cleanup:
+    file.delete()
+  }
+
+  def 'Verify write script create function to file successfully'() {
+    given: 'Setup data'
+    FileWriter fileWriter = this.tableDataService.setupFileBackup('test')
+
+    when: 'Write script create function'
+    this.databaseMetaService.writeScriptCreateFunctions(['getUserName_Func'], fileWriter)
+    fileWriter.close()
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    File file = new File('/tmp/test.sql')
+    file.exists()
+    file.isFile()
+    file.text == '''-- Script create functions
+
+DROP FUNCTION IF EXISTS `getUserName_Func`;
+CREATE DEFINER=`root`@`%` FUNCTION `getUserName_Func`() RETURNS varchar(20) CHARSET latin1
+    DETERMINISTIC
+BEGIN
+    DECLARE
+userName VARCHAR(20);
+    SET
+userName = 'Nhan Dinh';
+RETURN (userName);
+END;
+'''
+
+    cleanup:
+    file.delete()
+  }
+
+  def 'Verify write script create functions when empty function list'() {
+    given: 'Setup data'
+    FileWriter fileWriter = this.tableDataService.setupFileBackup('test')
+
+    when: 'write script create functions'
+    this.databaseMetaService.writeScriptCreateFunctions([], fileWriter)
     fileWriter.close()
 
     then: 'Result as expect'

@@ -142,5 +142,15 @@ BEGIN
     SET
 userName = 'Nhan Dinh';
 END;
+-- Script create functions
 
-
+DROP FUNCTION IF EXISTS `getUserName_Func`;
+CREATE DEFINER=`root`@`%` FUNCTION `getUserName_Func`() RETURNS varchar(20) CHARSET latin1
+    DETERMINISTIC
+BEGIN
+    DECLARE
+userName VARCHAR(20);
+    SET
+userName = 'Nhan Dinh';
+RETURN (userName);
+END;

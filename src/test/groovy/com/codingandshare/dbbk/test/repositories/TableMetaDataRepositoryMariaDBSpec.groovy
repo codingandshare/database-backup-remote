@@ -366,4 +366,13 @@ END'''
     noExceptionThrown()
     scriptDropProcedure == 'DROP PROCEDURE IF EXISTS `test`;'
   }
+
+  def 'Verify generate script drop if exists for function'() {
+    when: 'Generate script drop function'
+    String scriptDropFunction = this.tableMetaDataRepository.generateSqlDropIfExistsFunction('getUserName_Func')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptDropFunction == 'DROP FUNCTION IF EXISTS `getUserName_Func`;'
+  }
 }
