@@ -173,6 +173,5 @@ UNLOCK TABLES;
 '''
     cleanup:
     file.delete()
-
   }
 }
