@@ -5,6 +5,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.codingandshare.dbbk.repositories.TableMetaDataRepository
 import com.codingandshare.dbbk.services.BackupTableDataBackupTasklet
+import com.codingandshare.dbbk.services.DatabaseMetaTasklet
 import com.codingandshare.dbbk.services.ReadMetaTasklet
 import com.codingandshare.dbbk.test.utils.BaseSpecification
 import org.springframework.batch.core.ExitStatus
@@ -43,6 +44,7 @@ class BackupBatchJobMariaDBSpec extends BaseSpecification {
         .toJobParameters()
     ListAppender<ILoggingEvent> logReadMetaTable = this.setupLogger(ReadMetaTasklet)
     ListAppender<ILoggingEvent> logBackupTasklet = this.setupLogger(BackupTableDataBackupTasklet)
+    ListAppender<ILoggingEvent> logBackupDatabaseMeta = this.setupLogger(DatabaseMetaTasklet)
     List<String> tables = this.tableMetaDataRepository.getAllTables(this.tableMetaDataRepository.getDatabaseName())
 
     when: 'launch backup job'
@@ -52,7 +54,7 @@ class BackupBatchJobMariaDBSpec extends BaseSpecification {
 
     then: 'Result as expect'
     noExceptionThrown()
-    actualStepExecutions.size() == 2
+    actualStepExecutions.size() == 3
     exitStatus.exitCode == 'COMPLETED'
     File file = new File('/tmp/test.sql')
     file.isFile()
@@ -95,6 +97,18 @@ class BackupBatchJobMariaDBSpec extends BaseSpecification {
     }
     logs[tables.size() * 2 + 3].level == Level.INFO
     logs[tables.size() * 2 + 3].message == 'Execute backup data done.'
+
+    and: 'Log message for DatabaseMetaTasklet as expect'
+    List<ILoggingEvent> databaseMetaLogs = logBackupDatabaseMeta.list
+    databaseMetaLogs.size() == 4
+    databaseMetaLogs.first().level == Level.INFO
+    databaseMetaLogs.first().message == 'Tasklet database meta is executing...'
+    databaseMetaLogs[1].level == Level.DEBUG
+    databaseMetaLogs[1].message == 'Backup script create procedure starting...'
+    databaseMetaLogs[2].level == Level.DEBUG
+    databaseMetaLogs[2].message == 'Backup script create procedure done.'
+    databaseMetaLogs[3].level == Level.INFO
+    databaseMetaLogs[3].message == 'Tasklet database meta is done.'
 
     cleanup:
     file.delete()

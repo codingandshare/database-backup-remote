@@ -134,3 +134,13 @@ LOCK TABLES `user_role` WRITE;
 UNLOCK TABLES;
 
 
+-- Script create procedure
+
+DROP PROCEDURE IF EXISTS `GetUserName`;
+CREATE DEFINER=`root`@`%` PROCEDURE `GetUserName`( OUT userName VARCHAR (20) )
+BEGIN
+    SET
+userName = 'Nhan Dinh';
+END;
+
+

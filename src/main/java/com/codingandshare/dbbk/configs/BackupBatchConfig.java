@@ -1,6 +1,7 @@
 package com.codingandshare.dbbk.configs;
 
 import com.codingandshare.dbbk.services.BackupTableDataBackupTasklet;
+import com.codingandshare.dbbk.services.DatabaseMetaTasklet;
 import com.codingandshare.dbbk.services.ReadMetaTasklet;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -34,10 +35,16 @@ public class BackupBatchConfig {
   @Autowired
   private ReadMetaTasklet readMetaTasklet;
 
+  @Autowired
+  private DatabaseMetaTasklet databaseMetaTasklet;
+
   /**
    * Create job to backup database.
+   * This job will be executed by {@link ScheduledTasks}.
    * This job will contain steps:
-   * - {@link #readMetaDataStep()}
+   * - {@link #readMetaDataStep()} read meta data for next step to backup.
+   * - {@link #backupDataTableStep()} task handle backup script create table and data insert foreach tables.
+   * - {@link #backupDatabaseMetaStep()} task handle backup script create procedures, functions, triggers.
    *
    * @return Job
    */
@@ -48,6 +55,7 @@ public class BackupBatchConfig {
         .incrementer(new RunIdIncrementer())
         .start(readMetaDataStep())
         .next(backupDataTableStep())
+        .next(backupDatabaseMetaStep())
         .build();
   }
 
@@ -75,6 +83,19 @@ public class BackupBatchConfig {
     return this.steps
         .get("backupDataTableStep")
         .tasklet(this.backupTableDataBackupTasklet)
+        .build();
+  }
+
+  /**
+   * Create {@link Bean} the step handle to backup script create produces, functions, triggers.
+   *
+   * @return {@link Step}
+   */
+  @Bean
+  protected Step backupDatabaseMetaStep() {
+    return this.steps
+        .get("backupDatabaseMetaStep")
+        .tasklet(this.databaseMetaTasklet)
         .build();
   }
 }

@@ -173,4 +173,12 @@ public interface TableMetaDataRepository {
    * @return sql enable foreign key.
    */
   String generateSqlEnableFkKey(String tableName);
+
+  /**
+   * Generate sql script drop if exists procedure.
+   *
+   * @param procedureName
+   * @return sql script drop procedure
+   */
+  String generateSqlDropIfExistsProcedure(String procedureName);
 }
