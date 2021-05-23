@@ -316,4 +316,15 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   public String generateSqlDropIfExistsTrigger(String triggerName) {
     return String.format("DROP TRIGGER IF EXISTS `%s`;", triggerName);
   }
+
+  /**
+   * Generate sql script help to drop if exists view.
+   *
+   * @param viewName
+   * @return sql script drop view
+   */
+  @Override
+  public String generateSqlDropIfExistsView(String viewName) {
+    return String.format("DROP VIEW IF EXISTS `%s`;", viewName);
+  }
 }

@@ -40,4 +40,13 @@ public interface DatabaseMetaService {
    * @throws IOException write script to file failed
    */
   void writeScriptCreateTriggers(List<String> triggers, FileWriter fileWriter) throws IOException;
+
+  /**
+   * Generate the script create foreach view and write it to file.
+   *
+   * @param views      list views need to backup
+   * @param fileWriter {@link FileWriter}
+   * @throws IOException write script to file failed
+   */
+  void writeScriptCreateViews(List<String> views, FileWriter fileWriter) throws IOException;
 }

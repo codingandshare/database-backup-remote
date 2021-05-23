@@ -30,21 +30,19 @@ public class DatabaseMetaServiceImpl implements DatabaseMetaService {
    */
   @Override
   public void writeScriptCreateProcedures(List<String> procedures, FileWriter fileWriter) throws IOException {
-    if (procedures.isEmpty()) {
-      return;
-    } else {
+    if (!procedures.isEmpty()) {
       fileWriter.write("-- Script create procedure\n\n");
-    }
-    for (String procedure : procedures) {
-      String scriptDropProcedure = this.tableMetaDataRepository.generateSqlDropIfExistsProcedure(procedure);
-      fileWriter.write(scriptDropProcedure);
+      for (String procedure : procedures) {
+        String scriptDropProcedure = this.tableMetaDataRepository.generateSqlDropIfExistsProcedure(procedure);
+        fileWriter.write(scriptDropProcedure);
+        fileWriter.write("\n");
+        String scriptCreateProcedure = this.tableMetaDataRepository.generateScriptCreateProcedure(procedure);
+        fileWriter.write(scriptCreateProcedure);
+        fileWriter.write(";\n");
+      }
       fileWriter.write("\n");
-      String scriptCreateProcedure = this.tableMetaDataRepository.generateScriptCreateProcedure(procedure);
-      fileWriter.write(scriptCreateProcedure);
-      fileWriter.write(";\n");
+      fileWriter.flush();
     }
-    fileWriter.write("\n");
-    fileWriter.flush();
   }
 
   /**
@@ -56,21 +54,19 @@ public class DatabaseMetaServiceImpl implements DatabaseMetaService {
    */
   @Override
   public void writeScriptCreateFunctions(List<String> functions, FileWriter fileWriter) throws IOException {
-    if (functions.isEmpty()) {
-      return;
-    } else {
+    if (!functions.isEmpty()) {
       fileWriter.write("-- Script create functions\n\n");
-    }
-    for (String function : functions) {
-      String scriptDropFunction = this.tableMetaDataRepository.generateSqlDropIfExistsFunction(function);
-      fileWriter.write(scriptDropFunction);
+      for (String function : functions) {
+        String scriptDropFunction = this.tableMetaDataRepository.generateSqlDropIfExistsFunction(function);
+        fileWriter.write(scriptDropFunction);
+        fileWriter.write("\n");
+        String scriptCreateFunction = this.tableMetaDataRepository.generateScriptCreateFunction(function);
+        fileWriter.write(scriptCreateFunction);
+        fileWriter.write(";\n");
+      }
       fileWriter.write("\n");
-      String scriptCreateFunction = this.tableMetaDataRepository.generateScriptCreateFunction(function);
-      fileWriter.write(scriptCreateFunction);
-      fileWriter.write(";\n");
+      fileWriter.flush();
     }
-    fileWriter.write("\n");
-    fileWriter.flush();
   }
 
   /**
@@ -82,19 +78,42 @@ public class DatabaseMetaServiceImpl implements DatabaseMetaService {
    */
   @Override
   public void writeScriptCreateTriggers(List<String> triggers, FileWriter fileWriter) throws IOException {
-    if (triggers.isEmpty()) {
-      return;
-    } else {
+    if (!triggers.isEmpty()) {
       fileWriter.write("-- Script create triggers\n\n");
-    }
-    for (String trigger : triggers) {
-      String scriptDropTrigger = this.tableMetaDataRepository.generateSqlDropIfExistsTrigger(trigger);
-      fileWriter.write(scriptDropTrigger);
+      for (String trigger : triggers) {
+        String scriptDropTrigger = this.tableMetaDataRepository.generateSqlDropIfExistsTrigger(trigger);
+        fileWriter.write(scriptDropTrigger);
+        fileWriter.write("\n");
+        String scriptCreateTrigger = this.tableMetaDataRepository.generateScriptCreateTrigger(trigger);
+        fileWriter.write(scriptCreateTrigger);
+        fileWriter.write(";\n");
+      }
       fileWriter.write("\n");
-      String scriptCreateTrigger = this.tableMetaDataRepository.generateScriptCreateTrigger(trigger);
-      fileWriter.write(scriptCreateTrigger);
-      fileWriter.write(";\n");
+      fileWriter.flush();
     }
-    fileWriter.flush();
+  }
+
+  /**
+   * Generate the script create foreach view and write it to file.
+   *
+   * @param views      list views need to backup
+   * @param fileWriter {@link FileWriter}
+   * @throws IOException write script to file failed
+   */
+  @Override
+  public void writeScriptCreateViews(List<String> views, FileWriter fileWriter) throws IOException {
+    if (!views.isEmpty()) {
+      fileWriter.write("-- Script create views\n\n");
+      for (String view : views) {
+        String scriptDropView = this.tableMetaDataRepository.generateSqlDropIfExistsView(view);
+        fileWriter.write(scriptDropView);
+        fileWriter.write("\n");
+        String scriptCreateView = this.tableMetaDataRepository.generateScriptCreateView(view);
+        fileWriter.write(scriptCreateView);
+        fileWriter.write(";\n");
+      }
+      fileWriter.write("\n");
+      fileWriter.flush();
+    }
   }
 }
