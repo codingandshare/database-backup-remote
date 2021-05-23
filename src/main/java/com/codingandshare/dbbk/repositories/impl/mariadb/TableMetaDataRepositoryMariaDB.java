@@ -294,4 +294,15 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   public String generateSqlDropIfExistsProcedure(String procedureName) {
     return String.format("DROP PROCEDURE IF EXISTS `%s`;", procedureName);
   }
+
+  /**
+   * Generate sql script help to drop if exists function.
+   *
+   * @param functionName
+   * @return sql script drop function.
+   */
+  @Override
+  public String generateSqlDropIfExistsFunction(String functionName) {
+    return String.format("DROP FUNCTION IF EXISTS `%s`;", functionName);
+  }
 }

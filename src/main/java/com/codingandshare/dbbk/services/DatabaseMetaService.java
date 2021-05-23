@@ -17,9 +17,18 @@ public interface DatabaseMetaService {
   /**
    * Generate the script create foreach procedure and write it to file.
    *
-   * @param fileWriter   {@link FileWriter}
+   * @param fileWriter {@link FileWriter}
    * @param procedures list procedures need to backup.
    * @throws IOException write script to file failed
    */
-  void writeScriptCreateProcedure(List<String> procedures, FileWriter fileWriter) throws IOException;
+  void writeScriptCreateProcedures(List<String> procedures, FileWriter fileWriter) throws IOException;
+
+  /**
+   * Generate the script create foreach function and write it to file.
+   *
+   * @param functions list functions need to backup.
+   * @param fileWriter {@link FileWriter}
+   * @throws IOException write script to file failed
+   */
+  void writeScriptCreateFunctions(List<String> functions, FileWriter fileWriter) throws IOException;
 }

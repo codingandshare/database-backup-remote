@@ -29,8 +29,10 @@ public class DatabaseMetaServiceImpl implements DatabaseMetaService {
    * @throws IOException write script to file failed
    */
   @Override
-  public void writeScriptCreateProcedure(List<String> procedures, FileWriter fileWriter) throws IOException {
-    if (!procedures.isEmpty()) {
+  public void writeScriptCreateProcedures(List<String> procedures, FileWriter fileWriter) throws IOException {
+    if (procedures.isEmpty()) {
+      return;
+    } else {
       fileWriter.write("-- Script create procedure\n\n");
     }
     for (String procedure : procedures) {
@@ -41,8 +43,30 @@ public class DatabaseMetaServiceImpl implements DatabaseMetaService {
       fileWriter.write(scriptCreateProcedure);
       fileWriter.write(";\n");
     }
-    if (!procedures.isEmpty()) {
-      fileWriter.write("\n\n");
+    fileWriter.flush();
+  }
+
+  /**
+   * Generate the script create foreach function and write it to file.
+   *
+   * @param functions  list functions need to backup.
+   * @param fileWriter {@link FileWriter}
+   * @throws IOException write script to file failed
+   */
+  @Override
+  public void writeScriptCreateFunctions(List<String> functions, FileWriter fileWriter) throws IOException {
+    if (functions.isEmpty()) {
+      return;
+    } else {
+      fileWriter.write("-- Script create functions\n\n");
+    }
+    for (String function : functions) {
+      String scriptDropFunction = this.tableMetaDataRepository.generateSqlDropIfExistsFunction(function);
+      fileWriter.write(scriptDropFunction);
+      fileWriter.write("\n");
+      String scriptCreateFunction = this.tableMetaDataRepository.generateScriptCreateFunction(function);
+      fileWriter.write(scriptCreateFunction);
+      fileWriter.write(";\n");
     }
     fileWriter.flush();
   }

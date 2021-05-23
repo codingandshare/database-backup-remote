@@ -19,6 +19,7 @@ public final class DBBackupConst {
   public static final String KEY_TABLE = "tables";
   public static final String KEY_DATABASE = "database";
   public static final String KEY_PROCEDURES = "procedures";
+  public static final String KEY_FUNCTIONS = "functions";
   public static final String KEY_FILE = "file";
 
   /**

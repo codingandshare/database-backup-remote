@@ -31,12 +31,14 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
   private DatabaseMetaService databaseMetaService;
 
   private List<String> procedures;
+  private List<String> functions;
   private FileWriter fileWriter;
 
   /**
    * Setup data for tasklet executing.
    * Get meta data table for help execute tasklet.
    * Get list procedures from {@link ReadMetaTasklet} step.
+   * Get list functions from {@link ReadMetaTasklet} step.
    * Get {@link FileWriter} instance from {@link BackupTableDataBackupTasklet} step.
    *
    * @param stepExecution
@@ -45,6 +47,7 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
   public void beforeStep(StepExecution stepExecution) {
     ExecutionContext executionContext = stepExecution.getJobExecution().getExecutionContext();
     this.procedures = (List<String>) executionContext.get(DBBackupConst.KEY_PROCEDURES);
+    this.functions = (List<String>) executionContext.get(DBBackupConst.KEY_FUNCTIONS);
     this.fileWriter = (FileWriter) executionContext.get(DBBackupConst.KEY_FILE);
   }
 
@@ -59,6 +62,7 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
     if (this.fileWriter != null) {
       try {
         this.fileWriter.close();
+        log.info("FileWriter is closed.");
       } catch (IOException ignored) {
       }
     }
@@ -68,6 +72,7 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
   /**
    * The method execute tasklet.
    * - Backup script create for procedures.
+   * - Backup script create for functions.
    *
    * @param contribution
    * @param chunkContext
@@ -78,8 +83,11 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
   public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
     log.info("Tasklet database meta is executing...");
     log.debug("Backup script create procedure starting...");
-    this.databaseMetaService.writeScriptCreateProcedure(this.procedures, this.fileWriter);
+    this.databaseMetaService.writeScriptCreateProcedures(this.procedures, this.fileWriter);
     log.debug("Backup script create procedure done.");
+    log.debug("Backup script create function starting...");
+    this.databaseMetaService.writeScriptCreateFunctions(this.functions, this.fileWriter);
+    log.debug("Backup script create function done.");
     log.info("Tasklet database meta is done.");
     return RepeatStatus.FINISHED;
   }

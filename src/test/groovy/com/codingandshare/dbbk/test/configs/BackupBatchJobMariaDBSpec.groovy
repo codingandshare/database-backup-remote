@@ -100,15 +100,21 @@ class BackupBatchJobMariaDBSpec extends BaseSpecification {
 
     and: 'Log message for DatabaseMetaTasklet as expect'
     List<ILoggingEvent> databaseMetaLogs = logBackupDatabaseMeta.list
-    databaseMetaLogs.size() == 4
+    databaseMetaLogs.size() == 7
     databaseMetaLogs.first().level == Level.INFO
     databaseMetaLogs.first().message == 'Tasklet database meta is executing...'
     databaseMetaLogs[1].level == Level.DEBUG
     databaseMetaLogs[1].message == 'Backup script create procedure starting...'
     databaseMetaLogs[2].level == Level.DEBUG
     databaseMetaLogs[2].message == 'Backup script create procedure done.'
-    databaseMetaLogs[3].level == Level.INFO
-    databaseMetaLogs[3].message == 'Tasklet database meta is done.'
+    databaseMetaLogs[3].level == Level.DEBUG
+    databaseMetaLogs[3].message == 'Backup script create function starting...'
+    databaseMetaLogs[4].level == Level.DEBUG
+    databaseMetaLogs[4].message == 'Backup script create function done.'
+    databaseMetaLogs[5].level == Level.INFO
+    databaseMetaLogs[5].message == 'Tasklet database meta is done.'
+    databaseMetaLogs[6].level == Level.INFO
+    databaseMetaLogs[6].message == 'FileWriter is closed.'
 
     cleanup:
     file.delete()
