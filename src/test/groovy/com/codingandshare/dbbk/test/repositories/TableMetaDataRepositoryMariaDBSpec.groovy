@@ -357,4 +357,13 @@ END'''
     columns.size() == 5
     columns == ['c1', 'c2', 'c3', 'c4', 'c5']
   }
+
+  def 'Verify generate script drop if exists for procedure'() {
+    when: 'Generate script drop procedure'
+    String scriptDropProcedure = this.tableMetaDataRepository.generateSqlDropIfExistsProcedure('test')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    scriptDropProcedure == 'DROP PROCEDURE IF EXISTS `test`;'
+  }
 }

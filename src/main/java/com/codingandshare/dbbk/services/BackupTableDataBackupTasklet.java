@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -81,19 +80,17 @@ public class BackupTableDataBackupTasklet implements Tasklet, StepExecutionListe
 
   /**
    * The method will execute after step finished.
-   * Closing {@link FileWriter} resource.
+   * Pass {@link FileWriter} resource to next step.
    *
    * @param stepExecution
    * @return {@link ExitStatus}
    */
   @Override
   public ExitStatus afterStep(StepExecution stepExecution) {
-    if (this.fileWriter != null) {
-      try {
-        this.fileWriter.close();
-      } catch (IOException ignored) {
-      }
-    }
+    ExecutionContext executionContext = stepExecution
+        .getJobExecution()
+        .getExecutionContext();
+    executionContext.put(DBBackupConst.KEY_FILE, this.fileWriter);
     return ExitStatus.COMPLETED;
   }
 }

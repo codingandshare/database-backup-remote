@@ -92,7 +92,7 @@ public class ReadMetaTasklet implements Tasklet, StepExecutionListener {
     executionContext.put(DBBackupConst.KEY_TABLE, this.tables);
     executionContext.put("triggers", this.triggers);
     executionContext.put("functions", this.functions);
-    executionContext.put("procedures", this.procedures);
+    executionContext.put(DBBackupConst.KEY_PROCEDURES, this.procedures);
     return ExitStatus.COMPLETED;
   }
 }

@@ -283,4 +283,15 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   public String generateSqlEnableFkKey(String tableName) {
     return String.format("/*!40000 ALTER TABLE `%s` ENABLE KEYS */;", tableName);
   }
+
+  /**
+   * Generate sql script drop if exists procedure.
+   *
+   * @param procedureName
+   * @return sql script drop procedure
+   */
+  @Override
+  public String generateSqlDropIfExistsProcedure(String procedureName) {
+    return String.format("DROP PROCEDURE IF EXISTS `%s`;", procedureName);
+  }
 }
