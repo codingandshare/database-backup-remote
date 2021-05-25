@@ -49,4 +49,12 @@ public interface DatabaseMetaService {
    * @throws IOException write script to file failed
    */
   void writeScriptCreateViews(List<String> views, FileWriter fileWriter) throws IOException;
+
+  /**
+   * Write the footer for script backup.
+   *
+   * @param fileWriter {@link FileWriter}
+   * @throws IOException write to file failed
+   */
+  void writeScriptBackupFooter(FileWriter fileWriter) throws IOException;
 }

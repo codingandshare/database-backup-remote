@@ -42,7 +42,7 @@ CREATE TABLE `test_data_binary` (
 -- SQL insert data test_data_binary table 
 LOCK TABLES `test_data_binary` WRITE;
 /*!40000 ALTER TABLE `test_data_binary` DISABLE KEYS */;
-INSERT INTO test_data_binary (c1) VALUES (NULL),
+INSERT INTO `test_data_binary` (`c1`) VALUES (NULL),
 (535452494E47);
 /*!40000 ALTER TABLE `test_data_binary` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -63,7 +63,7 @@ CREATE TABLE `test_data_number` (
 -- SQL insert data test_data_number table 
 LOCK TABLES `test_data_number` WRITE;
 /*!40000 ALTER TABLE `test_data_number` DISABLE KEYS */;
-INSERT INTO test_data_number (c1,c2,c3,c4,c5) VALUES (1.0,1.00,NULL,1.0,1),
+INSERT INTO `test_data_number` (`c1`,`c2`,`c3`,`c4`,`c5`) VALUES (1.0,1.00,NULL,1.0,1),
 (NULL,1.00,'Nhan Dinh',1.0,1),
 (1.0,NULL,NULL,1.0,1);
 /*!40000 ALTER TABLE `test_data_number` ENABLE KEYS */;
@@ -83,7 +83,7 @@ CREATE TABLE `test_table` (
 -- SQL insert data test_table table 
 LOCK TABLES `test_table` WRITE;
 /*!40000 ALTER TABLE `test_table` DISABLE KEYS */;
-INSERT INTO test_table (updated_time,s_time,s_date) VALUES ('2020-10-19 03:10:00','03:10:00','2020-10-19');
+INSERT INTO `test_table` (`updated_time`,`s_time`,`s_date`) VALUES ('2020-10-19 03:10:00','03:10:00','2020-10-19');
 /*!40000 ALTER TABLE `test_table` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -108,7 +108,7 @@ CREATE TABLE `user` (
 -- SQL insert data user table 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO user (id,username,password,first_name,last_name,email,gender,status) VALUES (1,'huunhancit','password','Dinh','Nhan','huunhancit@gmail.com',1,1),
+INSERT INTO `user` (`id`,`username`,`password`,`first_name`,`last_name`,`email`,`gender`,`status`) VALUES (1,'huunhancit','password','Dinh','Nhan','huunhancit@gmail.com',1,1),
 (2,'dhnhan','password','Dinh','Nhan','dhnhan@gmail.com',1,1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -166,3 +166,11 @@ CREATE DEFINER=`root`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR E
 DROP VIEW IF EXISTS `user_view`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `user_view` AS select `u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`password` AS `password`,`u`.`first_name` AS `first_name`,`u`.`last_name` AS `last_name`,`u`.`email` AS `email`,`u`.`gender` AS `gender`,`u`.`status` AS `status`,`r`.`role_name` AS `role_name` from ((`user` `u` join `user_role` `u_role` on(`u`.`id` = `u_role`.`user_id`)) join `role` `r` on(`r`.`id` = `u_role`.`role_id`));
 
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+-- Backup completed: 2021-05-25

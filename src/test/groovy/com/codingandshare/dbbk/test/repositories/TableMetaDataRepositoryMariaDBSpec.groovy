@@ -1,6 +1,7 @@
 package com.codingandshare.dbbk.test.repositories
 
 import com.codingandshare.dbbk.repositories.TableMetaDataRepository
+import com.codingandshare.dbbk.utils.AppUtility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.TransientDataAccessResourceException
@@ -392,5 +393,40 @@ END'''
     then: 'Result as expect'
     noExceptionThrown()
     scriptDropView == 'DROP VIEW IF EXISTS `test`;'
+  }
+
+  def 'Verify generate footer for backup script'() {
+    when: 'Generate script footer'
+    String footer = this.tableMetaDataRepository.generateScriptBackupFooter()
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    String formatDate = AppUtility.formatDate(new Date(), 'yyyy-MM-dd')
+    footer == """
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+-- Backup completed: $formatDate"""
+  }
+
+  def 'Verify generate sql select table'() {
+    when: 'Generate script select table'
+    String select = this.tableMetaDataRepository.generateSelectTable('test')
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    select == 'SELECT * FROM `test`'
+  }
+
+  def 'Verify generate sql insert table'() {
+    when: 'Generate script insert table'
+    String insertSql = this.tableMetaDataRepository.generateInsertTable('test', ['c1', 'c2'])
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    insertSql == 'INSERT INTO `test` (`c1`,`c2`) VALUES '
   }
 }

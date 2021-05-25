@@ -81,6 +81,7 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
    * - Backup script create for functions.
    * - Backup script create for triggers.
    * - Backup script create for views.
+   * - Write footer into backup script file.
    *
    * @param contribution
    * @param chunkContext
@@ -102,6 +103,7 @@ public class DatabaseMetaTasklet implements Tasklet, StepExecutionListener {
     log.debug("Backup script create view starting...");
     this.databaseMetaService.writeScriptCreateViews(this.views, this.fileWriter);
     log.debug("Backup script create view done.");
+    this.databaseMetaService.writeScriptBackupFooter(fileWriter);
     log.info("Tasklet database meta is done.");
     return RepeatStatus.FINISHED;
   }

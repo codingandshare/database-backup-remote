@@ -3,6 +3,7 @@ package com.codingandshare.dbbk.test.services
 import com.codingandshare.dbbk.services.DatabaseMetaService
 import com.codingandshare.dbbk.services.TableDataService
 import com.codingandshare.dbbk.test.utils.BaseSpecification
+import com.codingandshare.dbbk.utils.AppUtility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -171,12 +172,35 @@ CREATE DEFINER=`root`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR E
     File file = new File('/tmp/test.sql')
     file.exists()
     file.isFile()
-    println file.text
     file.text == '''-- Script create views
 
 DROP VIEW IF EXISTS `user_view`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `user_view` AS select `u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`password` AS `password`,`u`.`first_name` AS `first_name`,`u`.`last_name` AS `last_name`,`u`.`email` AS `email`,`u`.`gender` AS `gender`,`u`.`status` AS `status`,`r`.`role_name` AS `role_name` from ((`user` `u` join `user_role` `u_role` on(`u`.`id` = `u_role`.`user_id`)) join `role` `r` on(`r`.`id` = `u_role`.`role_id`));
 
 '''
+  }
+
+  def 'Verify write script footer successfully'() {
+    given: 'Setup data'
+    FileWriter fileWriter= this.tableDataService.setupFileBackup('test')
+
+    when: 'Write script to file'
+    this.databaseMetaService.writeScriptBackupFooter(fileWriter)
+    fileWriter.close()
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    File file = new File('/tmp/test.sql')
+    file.exists()
+    file.isFile()
+    String dateFormat = AppUtility.formatDate(new Date(), 'yyyy-MM-dd')
+    file.text == """
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+-- Backup completed: $dateFormat"""
   }
 }

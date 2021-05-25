@@ -3,7 +3,6 @@ package com.codingandshare.dbbk.utils;
 import javax.xml.bind.DatatypeConverter;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -44,8 +43,7 @@ public final class SqlUtility {
    * @return string with format date
    */
   public static String sqlFormatDate(Date date, String format) {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-    return String.format("'%s'", simpleDateFormat.format(date));
+    return String.format("'%s'", AppUtility.formatDate(date, format));
   }
 
   /**

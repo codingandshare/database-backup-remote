@@ -116,4 +116,16 @@ public class DatabaseMetaServiceImpl implements DatabaseMetaService {
       fileWriter.flush();
     }
   }
+
+  /**
+   * Write the footer for script backup.
+   *
+   * @param fileWriter {@link FileWriter}
+   * @throws IOException write to file failed
+   */
+  @Override
+  public void writeScriptBackupFooter(FileWriter fileWriter) throws IOException {
+    fileWriter.write(this.tableMetaDataRepository.generateScriptBackupFooter());
+    fileWriter.flush();
+  }
 }
