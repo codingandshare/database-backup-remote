@@ -205,4 +205,28 @@ public interface TableMetaDataRepository {
    * @return sql script drop view
    */
   String generateSqlDropIfExistsView(String viewName);
+
+  /**
+   * Generate sql backup for footer.
+   *
+   * @return sql end of file backup
+   */
+  String generateScriptBackupFooter();
+
+  /**
+   * Generate sql select for table.
+   *
+   * @param tableName
+   * @return sql select from table
+   */
+  String generateSelectTable(String tableName);
+
+  /**
+   * Generate insert data for table.
+   *
+   * @param tableName
+   * @param columns
+   * @return sql insert table
+   */
+  String generateInsertTable(String tableName, List<String> columns);
 }

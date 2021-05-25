@@ -2,8 +2,13 @@ package com.codingandshare.dbbk.repositories.impl.mariadb;
 
 import com.codingandshare.dbbk.repositories.TableMetaDataAbstract;
 import com.codingandshare.dbbk.repositories.TableMetaDataRepository;
+import com.codingandshare.dbbk.utils.AppUtility;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The class implement {@link TableMetaDataRepository} interface handle MariaDB.
@@ -326,5 +331,51 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   @Override
   public String generateSqlDropIfExistsView(String viewName) {
     return String.format("DROP VIEW IF EXISTS `%s`;", viewName);
+  }
+
+  /**
+   * Generate sql backup for footer.
+   *
+   * @return sql end of file backup
+   */
+  @Override
+  public String generateScriptBackupFooter() {
+    StringBuilder sql = new StringBuilder();
+    sql.append("\n");
+    sql.append("/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;\n");
+    sql.append("/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;\n");
+    sql.append("/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;\n");
+    sql.append("/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;\n");
+    sql.append("/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;\n");
+    sql.append("/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;\n");
+    sql.append(String.format("-- Backup completed: %s",
+        AppUtility.formatDate(new Date(), this.getDateFormat())));
+    return sql.toString();
+  }
+
+  /**
+   * Generate sql select for table.
+   *
+   * @param tableName
+   * @return sql select from table
+   */
+  @Override
+  public String generateSelectTable(String tableName) {
+    return String.format("SELECT * FROM `%s`", tableName);
+  }
+
+  /**
+   * Generate insert data for table.
+   *
+   * @param tableName
+   * @param columns
+   * @return sql insert table
+   */
+  @Override
+  public String generateInsertTable(String tableName, List<String> columns) {
+    List<String> cols = columns.stream()
+        .map(it -> String.format("`%s`", it))
+        .collect(Collectors.toList());
+    return String.format("INSERT INTO `%s` (%s) VALUES ", tableName, String.join(",", cols));
   }
 }

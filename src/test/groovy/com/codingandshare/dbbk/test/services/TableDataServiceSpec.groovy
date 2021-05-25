@@ -67,7 +67,7 @@ class TableDataServiceSpec extends Specification {
     file.isFile()
     file.text == '''LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO user (id,username,password,first_name,last_name,email,gender,status) VALUES (1,'huunhancit','password','Dinh','Nhan','huunhancit@gmail.com',1,1),\n(2,'dhnhan','password','Dinh','Nhan','dhnhan@gmail.com',1,1);
+INSERT INTO `user` (`id`,`username`,`password`,`first_name`,`last_name`,`email`,`gender`,`status`) VALUES (1,'huunhancit','password','Dinh','Nhan','huunhancit@gmail.com',1,1),\n(2,'dhnhan','password','Dinh','Nhan','dhnhan@gmail.com',1,1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 '''

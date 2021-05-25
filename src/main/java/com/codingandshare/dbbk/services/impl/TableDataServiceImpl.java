@@ -72,24 +72,25 @@ public class TableDataServiceImpl implements TableDataService {
     fileWriter.write("\n");
     fileWriter.write(this.tableMetaDataRepository.generateSqlDisableFkKey(tableName));
     fileWriter.write("\n");
-    String sqlSelect = String.format("SELECT * FROM %s", tableName);
     AtomicLong rows = new AtomicLong();
-    this.jdbcTemplate.query(new StreamingStatementCreator(sqlSelect), rs -> {
-      try {
-        if (rows.get() == 0) {
-          List<String> columns = this.tableMetaDataRepository.getAllColumnFromResultSet(rs);
-          fileWriter.write(String.format("INSERT INTO %s (%s) VALUES ", tableName, String.join(",", columns)));
-        } else {
-          fileWriter.append(",\n");
-        }
-        fileWriter.write(String.format("(%s)", String.join(",",
-            this.tableMetaDataRepository.getValueInsertFromResultSet(rs))));
-        if (rows.getAndIncrement() % DBBackupConst.FETCH_SIZE_ROWS == 0) {
-          fileWriter.flush();
-        }
-      } catch (IOException ignored) {
-      }
-    });
+    this.jdbcTemplate.query(new StreamingStatementCreator(
+            this.tableMetaDataRepository.generateSelectTable(tableName)),
+        rs -> {
+          try {
+            if (rows.get() == 0) {
+              List<String> columns = this.tableMetaDataRepository.getAllColumnFromResultSet(rs);
+              fileWriter.write(this.tableMetaDataRepository.generateInsertTable(tableName, columns));
+            } else {
+              fileWriter.append(",\n");
+            }
+            fileWriter.write(String.format("(%s)", String.join(",",
+                this.tableMetaDataRepository.getValueInsertFromResultSet(rs))));
+            if (rows.getAndIncrement() % DBBackupConst.FETCH_SIZE_ROWS == 0) {
+              fileWriter.flush();
+            }
+          } catch (IOException ignored) {
+          }
+        });
     if (rows.get() > 0) {
       fileWriter.write(";\n");
     }
