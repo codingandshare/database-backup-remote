@@ -20,6 +20,7 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-jdbc'
   implementation 'org.springframework.boot:spring-boot-starter-batch'
   implementation 'org.liquibase:liquibase-core'
+  implementation 'org.eclipse.jgit:org.eclipse.jgit:5.11.1.202105131744-r'
   compileOnly 'org.projectlombok:lombok:1.18.20'
   annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
