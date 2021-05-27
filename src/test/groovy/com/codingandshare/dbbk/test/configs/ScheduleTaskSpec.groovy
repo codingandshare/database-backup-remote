@@ -6,6 +6,7 @@ import ch.qos.logback.core.read.ListAppender
 import com.codingandshare.dbbk.configs.ScheduledTasks
 import com.codingandshare.dbbk.services.impl.TableDataServiceImpl
 import com.codingandshare.dbbk.test.utils.BaseSpecification
+import com.codingandshare.dbbk.utils.AppUtility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -38,7 +39,11 @@ class ScheduleTaskSpec extends BaseSpecification {
     List<String> expectLines = getClass().getResource('/output/result_test_mariadb.sql').readLines()
     lines.eachWithIndex { String entry, int i ->
       if (i != 0) {
-        assert entry == expectLines[i]
+        if (expectLines[i].contains('DATE_BACKUP')) {
+          assert expectLines[i].replaceAll('DATE_BACKUP', AppUtility.formatDate(new Date(), 'yyyy-MM-dd')) == entry
+        } else {
+          assert entry == expectLines[i]
+        }
       }
     }
 

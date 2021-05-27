@@ -8,6 +8,7 @@ import com.codingandshare.dbbk.services.BackupTableDataBackupTasklet
 import com.codingandshare.dbbk.services.DatabaseMetaTasklet
 import com.codingandshare.dbbk.services.ReadMetaTasklet
 import com.codingandshare.dbbk.test.utils.BaseSpecification
+import com.codingandshare.dbbk.utils.AppUtility
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobExecution
@@ -64,7 +65,11 @@ class BackupBatchJobMariaDBSpec extends BaseSpecification {
     List<String> expectLines = getClass().getResource('/output/result_test_mariadb.sql').readLines()
     lines.eachWithIndex { String entry, int i ->
       if (i != 0) {
-        assert entry == expectLines[i]
+        if (expectLines[i].contains('DATE_BACKUP')) {
+          assert expectLines[i].replaceAll('DATE_BACKUP', AppUtility.formatDate(new Date(), 'yyyy-MM-dd')) == entry
+        } else {
+          assert entry == expectLines[i]
+        }
       }
     }
 

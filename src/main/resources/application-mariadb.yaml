@@ -22,3 +22,9 @@ app:
   scheduleBackup: '${SCHEDULE_BACKUP:* 0/23 * * * *}'
   storageFolder: '${STORAGE_FOLDER}'
   backupDataStorage: '${BACKUP_DATA_STORAGE}'
+  gitStorage: '${GIT_STORAGE:true}'
+  git:
+    token: '${GIT_TOKEN}'
+    gitRemoteUrl: '${GIT_REMOTE_URL}'
+    gitBranch: '${GIT_BRANCH}'
+    gitDir: '${GIT_DIR}'
