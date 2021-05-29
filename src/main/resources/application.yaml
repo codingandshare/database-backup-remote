@@ -1,0 +1,25 @@
+spring:
+  batch:
+    initialize-schema: NEVER
+    job:
+      enabled: false
+    table-prefix: '${PREFIX_TABLE_META:CAS_BATCH_}'
+  config:
+    use-legacy-processing: true
+  liquibase:
+    database-change-log-lock-table: ${PREFIX_TABLE_META:CAS_BATCH_}DATABASECHANGELOGLOCK
+    database-change-log-table: ${PREFIX_TABLE_META:CAS_BATCH_}DATABASECHANGELOG
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    parameters.prefixTable: '${PREFIX_TABLE_META:CAS_BATCH_}'
+
+app:
+  runSchedule: true
+  scheduleBackup: '${SCHEDULE_BACKUP:* 0/23 * * * *}'
+  storageFolder: '${STORAGE_FOLDER}'
+  retentionBackupFile: '${RETENTION_FILE_BACKUP:7}'
+  gitStorage: '${GIT_STORAGE:false}'
+  git:
+    token: '${GIT_TOKEN}'
+    gitRemoteUrl: '${GIT_REMOTE_URL}'
+    gitBranch: '${GIT_BRANCH}'
+    gitDir: '${GIT_DIR}'
