@@ -55,7 +55,7 @@ class BackupBatchJobMariaDBSpec extends BaseSpecification {
 
     then: 'Result as expect'
     noExceptionThrown()
-    actualStepExecutions.size() == 3
+    actualStepExecutions.size() == 4
     exitStatus.exitCode == 'COMPLETED'
     File file = new File('/tmp/test.sql')
     file.isFile()
