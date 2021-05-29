@@ -49,8 +49,6 @@ public class GitConfiguration {
    * Create an {@link Bean} help to config git repository.
    * If the folder git is exists then open git with JGit.
    * If the folder git don't exists then clone repository.
-   * Checkout the branch with user config.
-   * Pull new commit from remote branch.
    *
    * @return {@link Git}
    * @throws RuntimeException - When clone repository failed.
@@ -62,19 +60,15 @@ public class GitConfiguration {
   Git gitConfig() {
     try {
       File file = new File(this.gitProperties.getGitDir());
-      Git git;
       if (file.exists()) {
-        git = Git.open(file);
+        return Git.open(file);
       } else {
-        git = Git.cloneRepository()
+        return Git.cloneRepository()
             .setDirectory(file)
             .setURI(this.gitProperties.getGitRemoteUrl())
             .setCredentialsProvider(this.usernamePasswordCredentialsProvider())
             .call();
       }
-      git.checkout().setName(this.gitProperties.getGitBranch()).call();
-      git.pull().setCredentialsProvider(this.usernamePasswordCredentialsProvider()).call();
-      return git;
     } catch (GitAPIException | IOException e) {
       throw new RuntimeException("Git clone failed", e);
     }
