@@ -9,6 +9,8 @@ import javax.sql.DataSource;
 
 /**
  * The class to config relate to database connection.
+ * The class auto config get {@link DataSource} from properties spring.
+ * Will create singleton instance {@link JdbcTemplate} with {@link DataSource}.
  *
  * @author Nhan Dinh
  * @since 4/25/21
@@ -16,6 +18,9 @@ import javax.sql.DataSource;
 @Configuration
 public class DatabaseConfig {
 
+  /**
+   * Get {@link DataSource} from user config.
+   */
   @Autowired
   private DataSource dataSource;
 

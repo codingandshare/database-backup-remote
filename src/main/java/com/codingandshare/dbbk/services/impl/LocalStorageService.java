@@ -1,8 +1,8 @@
 package com.codingandshare.dbbk.services.impl;
 
 import com.codingandshare.dbbk.exceptions.DBBackupException;
-import com.codingandshare.dbbk.services.AbstractBackStorageService;
-import com.codingandshare.dbbk.services.BackupStorageService;
+import com.codingandshare.dbbk.services.AbstractStorageService;
+import com.codingandshare.dbbk.services.StorageService;
 import com.codingandshare.dbbk.utils.AppUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -25,10 +25,10 @@ import java.util.Date;
  * @author Nhan Dinh
  * @since 5/29/21
  **/
-@Service
-@Order(0)
 @Slf4j
-public class LocalBackupStorageService extends AbstractBackStorageService implements BackupStorageService {
+@Order(0)
+@Service(value = "localStorage")
+public class LocalStorageService extends AbstractStorageService implements StorageService {
 
   /**
    * The method help to copy backup file sql to ${STORAGE_FOLDER}/data_backup/databaseName.${yyyy-MM-dd}.sql.
@@ -61,7 +61,7 @@ public class LocalBackupStorageService extends AbstractBackStorageService implem
   }
 
   /**
-   * The method get name store service of {@link LocalBackupStorageService}.
+   * The method get name store service of {@link LocalStorageService}.
    *
    * @return name local service
    */
@@ -69,7 +69,6 @@ public class LocalBackupStorageService extends AbstractBackStorageService implem
   public String getBackupStorageName() {
     return "Local storage";
   }
-
 
   /**
    * The method will run after finished job backup data.
@@ -81,17 +80,19 @@ public class LocalBackupStorageService extends AbstractBackStorageService implem
    */
   private void cleanupBackupFile() {
     File backupFolder = new File(this.backupFolder);
-    LocalDate retentionDate = LocalDate.now().minusDays(this.retentionBackupFile);
+    LocalDate retentionDate = LocalDate.now().minusDays(this.retentionBackupFile - 1);
     String[] listFileNameNeedDelete = backupFolder.list((dir, name) -> {
+      String fileName = String.format("%s%s%s", dir, File.separator, name);
       LocalDate fileCreatedDate = Instant
-          .ofEpochMilli(dir.lastModified())
+          .ofEpochMilli(new File(fileName).lastModified())
           .atZone(ZoneId.systemDefault())
           .toLocalDate();
       return name.startsWith(dataBaseName) && fileCreatedDate.isBefore(retentionDate);
     });
     if (listFileNameNeedDelete != null && listFileNameNeedDelete.length > 0) {
       for (String fileNameDeleting : listFileNameNeedDelete) {
-        boolean isDeleteSuccess = new File(fileNameDeleting).delete();
+        String fileNameFullPath = String.format("%s%s%s", this.backupFolder, File.separator, fileNameDeleting);
+        boolean isDeleteSuccess = new File(fileNameFullPath).delete();
         log.debug(String.format("File %s is deleted: %s", fileNameDeleting, isDeleteSuccess));
       }
     }

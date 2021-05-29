@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles
  */
 @SpringBootTest
 @ActiveProfiles('mariadb-test')
-class DatabaseMetaServiceSpec extends BaseSpecification {
+class DatabaseMetaServiceMariaDBSpec extends BaseSpecification {
 
   @Autowired
   private DatabaseMetaService databaseMetaService

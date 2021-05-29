@@ -8,13 +8,13 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 
 /**
- * The abstraction class help build some common methods used by {@link BackupStorageService}.
+ * The abstraction class help build some common methods used by {@link StorageService}.
  * Handle get config from env for put to storage.
  *
  * @author Nhan Dinh
  * @since 5/29/21
  **/
-public abstract class AbstractBackStorageService {
+public abstract class AbstractStorageService {
 
   /**
    * The folder storage file backup on local server.
@@ -55,7 +55,7 @@ public abstract class AbstractBackStorageService {
   private TableMetaDataRepository tableMetaDataRepository;
 
   /**
-   * The method will get config and init for {@link AbstractBackStorageService#}.
+   * The method will get config and init for {@link AbstractStorageService#}.
    * The method will run after spring context started.
    * Init value for {@link #fileBackup}.
    * Init value for {@link #backupFolder}.

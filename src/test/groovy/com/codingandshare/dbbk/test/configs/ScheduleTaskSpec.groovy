@@ -1,8 +1,5 @@
 package com.codingandshare.dbbk.test.configs
 
-import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.read.ListAppender
 import com.codingandshare.dbbk.configs.ScheduledTasks
 import com.codingandshare.dbbk.services.impl.TableDataServiceImpl
 import com.codingandshare.dbbk.test.utils.BaseSpecification
@@ -10,8 +7,6 @@ import com.codingandshare.dbbk.utils.AppUtility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-
-
 /**
  * Unit test for {@link ScheduledTasks}
  */
@@ -26,6 +21,12 @@ class ScheduleTaskSpec extends BaseSpecification {
   private TableDataServiceImpl tableDataService
 
   def 'Schedule job backup database'() {
+    given: 'Setup data'
+    File fileBackupFolder = new File('/tmp/data_backup')
+    if (!fileBackupFolder.exists()) {
+      fileBackupFolder.mkdirs()
+    }
+
     when: 'Call schedule job'
     this.scheduledTasks.scheduleBackup()
 
@@ -47,7 +48,22 @@ class ScheduleTaskSpec extends BaseSpecification {
       }
     }
 
+    and: 'Check folder backup storage local'
+    File folderBackup = new File('/tmp/data_backup')
+    folderBackup.exists()
+    folderBackup.isDirectory()
+    String[] files = folderBackup.list()
+    files.length == 1
+    String fileNameStore = "test.${AppUtility.formatDate(new Date(), 'yyyy-MM-dd')}.sql"
+    String fileNameBackup = files[0]
+    fileNameBackup == fileNameStore
+    File fileBackupStorage = new File("/tmp/data_backup/$fileNameStore")
+    fileBackupStorage.exists()
+    fileBackupStorage.isFile()
+    fileBackupStorage.text == file.text
+
     cleanup:
     file.delete()
+    folderBackup.deleteDir()
   }
 }

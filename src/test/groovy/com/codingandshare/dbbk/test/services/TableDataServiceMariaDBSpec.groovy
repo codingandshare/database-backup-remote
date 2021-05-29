@@ -1,6 +1,5 @@
 package com.codingandshare.dbbk.test.services
 
-
 import com.codingandshare.dbbk.exceptions.DBBackupException
 import com.codingandshare.dbbk.services.impl.TableDataServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +12,7 @@ import spock.lang.Specification
  */
 @SpringBootTest
 @ActiveProfiles('mariadb-test')
-class TableDataServiceSpec extends Specification {
+class TableDataServiceMariaDBSpec extends Specification {
   private static final String DB_NAME = 'test'
 
   @Autowired
