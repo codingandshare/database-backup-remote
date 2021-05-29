@@ -89,7 +89,7 @@ public class LocalStorageService extends AbstractStorageService implements Stora
           .toLocalDate();
       return name.startsWith(dataBaseName) && fileCreatedDate.isBefore(retentionDate);
     });
-    if (listFileNameNeedDelete != null && listFileNameNeedDelete.length > 0) {
+    if (!AppUtility.isEmpty(listFileNameNeedDelete)) {
       for (String fileNameDeleting : listFileNameNeedDelete) {
         String fileNameFullPath = String.format("%s%s%s", this.backupFolder, File.separator, fileNameDeleting);
         boolean isDeleteSuccess = new File(fileNameFullPath).delete();

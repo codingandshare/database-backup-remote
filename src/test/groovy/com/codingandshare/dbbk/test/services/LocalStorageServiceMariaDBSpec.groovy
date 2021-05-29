@@ -3,6 +3,7 @@ package com.codingandshare.dbbk.test.services
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import com.codingandshare.dbbk.exceptions.DBBackupException
 import com.codingandshare.dbbk.services.StorageService
 import com.codingandshare.dbbk.services.impl.LocalStorageService
 import com.codingandshare.dbbk.test.utils.BaseSpecification
@@ -37,15 +38,33 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     name == 'Local storage'
   }
 
+  def 'Verify the local storage store failed'() {
+    given: 'Clean folder data_backup'
+    new File('/tmp/data_backup').deleteDir()
+    ListAppender<ILoggingEvent> logs = setupLogger(LocalStorageService)
+
+    when: 'Store file'
+    this.storageService.store()
+
+    then: 'Throw expect as expect'
+    DBBackupException e = thrown(DBBackupException)
+    e.message == 'Store local file failed'
+    e.cause instanceof IOException
+
+    and: 'Logs as expect'
+    logs.list.size() == 1
+    logs.list.first().level == Level.ERROR
+    logs.list.first().message == 'Store local file failed'
+
+    cleanup:
+    new File('/tmp/data_backup').mkdirs()
+  }
+
   def 'Verify the local storage service store file successfully'() {
     given: 'Setup data'
     String fileNameBackup = '/tmp/test.sql'
     File backupFile = new File(fileNameBackup)
     backupFile.write('Sql test')
-    File file = new File('/tmp/data_backup')
-    if(!file.exists()) {
-      file.mkdirs()
-    }
 
     when: 'store file backup'
     this.storageService.store()
@@ -62,7 +81,7 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
 
     cleanup:
     backupFile.delete()
-    new File('/tmp/data_backup').deleteDir()
+    AppUtility.cleanDirectory('/tmp/data_backup')
   }
 
   def 'Verify local storage cleanup file with retention days'() {
@@ -78,6 +97,7 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
       file.write('sql test')
       Files.setAttribute(file.toPath(), 'lastModifiedTime', FileTime.fromMillis(date.time))
     }
+    new File('/tmp/data_backup/nhan.txt').createNewFile()
     ListAppender<ILoggingEvent> localStorageLogs = setupLogger(LocalStorageService)
 
 
@@ -99,8 +119,8 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     fileFolderBackup.exists()
     fileFolderBackup.isDirectory()
     String[] fileNames = fileFolderBackup.list()
-    fileNames.length == 3
-    String[] files = fileNames.sort().reverse()
+    fileNames.length == 4
+    String[] files = fileNames.sort().reverse().findAll { it != 'nhan.txt' }
     for (int i = 0; i < 3; i++) {
       Date date = new Date() - i
       String fileNameStore = "test.${AppUtility.formatDate(date, 'yyyy-MM-dd')}.sql"
@@ -119,6 +139,6 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
 
     cleanup:
     backupFile.delete()
-    new File('/tmp/data_backup').deleteDir()
+    AppUtility.cleanDirectory('/tmp/data_backup')
   }
 }

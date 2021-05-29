@@ -157,6 +157,9 @@ CREATE DEFINER=`root`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR E
     file.exists()
     file.isFile()
     file.text.isEmpty()
+
+    cleanup:
+    file.delete()
   }
 
   def 'Verify write script create view successfully'() {
@@ -178,6 +181,27 @@ DROP VIEW IF EXISTS `user_view`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `user_view` AS select `u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`password` AS `password`,`u`.`first_name` AS `first_name`,`u`.`last_name` AS `last_name`,`u`.`email` AS `email`,`u`.`gender` AS `gender`,`u`.`status` AS `status`,`r`.`role_name` AS `role_name` from ((`user` `u` join `user_role` `u_role` on(`u`.`id` = `u_role`.`user_id`)) join `role` `r` on(`r`.`id` = `u_role`.`role_id`));
 
 '''
+    cleanup:
+    file.delete()
+  }
+
+  def 'Verify write script create views when input empty'() {
+    given: 'Setup data'
+    FileWriter fileWriter = this.tableDataService.setupFileBackup('test')
+
+    when: 'Write script create view'
+    this.databaseMetaService.writeScriptCreateViews([], fileWriter)
+    fileWriter.close()
+
+    then: 'Result as expect'
+    noExceptionThrown()
+    File file = new File('/tmp/test.sql')
+    file.exists()
+    file.isFile()
+    file.text.isEmpty()
+
+    cleanup:
+    file.delete()
   }
 
   def 'Verify write script footer successfully'() {
@@ -202,5 +226,8 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `user_vi
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 -- Backup completed: $dateFormat"""
+
+    cleanup:
+    file.delete()
   }
 }

@@ -47,10 +47,6 @@ class BackupBatchJobMariaDBSpec extends BaseSpecification {
     ListAppender<ILoggingEvent> logBackupTasklet = this.setupLogger(BackupTableDataBackupTasklet)
     ListAppender<ILoggingEvent> logBackupDatabaseMeta = this.setupLogger(DatabaseMetaTasklet)
     List<String> tables = this.tableMetaDataRepository.getAllTables(this.tableMetaDataRepository.getDatabaseName())
-    File fileBackupFolder = new File('/tmp/data_backup')
-    if (!fileBackupFolder.exists()) {
-      fileBackupFolder.mkdirs()
-    }
 
     when: 'launch backup job'
     JobExecution jobExecution = this.jobLauncher.run(this.backJob, jobParameters)
@@ -149,6 +145,6 @@ class BackupBatchJobMariaDBSpec extends BaseSpecification {
 
     cleanup:
     file.delete()
-    folderBackup.deleteDir()
+    AppUtility.cleanDirectory('/tmp/data_backup')
   }
 }

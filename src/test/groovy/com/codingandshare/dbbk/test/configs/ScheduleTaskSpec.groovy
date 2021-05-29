@@ -21,12 +21,6 @@ class ScheduleTaskSpec extends BaseSpecification {
   private TableDataServiceImpl tableDataService
 
   def 'Schedule job backup database'() {
-    given: 'Setup data'
-    File fileBackupFolder = new File('/tmp/data_backup')
-    if (!fileBackupFolder.exists()) {
-      fileBackupFolder.mkdirs()
-    }
-
     when: 'Call schedule job'
     this.scheduledTasks.scheduleBackup()
 
@@ -64,6 +58,6 @@ class ScheduleTaskSpec extends BaseSpecification {
 
     cleanup:
     file.delete()
-    folderBackup.deleteDir()
+    AppUtility.cleanDirectory('/tmp/data_backup')
   }
 }
