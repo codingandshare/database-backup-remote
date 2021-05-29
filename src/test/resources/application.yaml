@@ -19,4 +19,5 @@ app:
   scheduleBackup: '-'
   runSchedule: true
   storageFolder: '/tmp'
+  retentionBackupFile: 3
   gitStorage: false

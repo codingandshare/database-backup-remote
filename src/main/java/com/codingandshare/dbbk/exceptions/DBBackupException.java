@@ -16,4 +16,14 @@ public class DBBackupException extends RuntimeException {
   public DBBackupException(String message) {
     super(message);
   }
+
+  /**
+   * Constructor to new instance with message and exception for for <code>DBBackupException</code>.
+   *
+   * @param message
+   * @param cause
+   */
+  public DBBackupException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }
