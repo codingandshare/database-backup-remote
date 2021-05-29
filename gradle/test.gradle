@@ -1,9 +1,0 @@
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-}
-
-test {
-  maxParallelForks(1)
-}
