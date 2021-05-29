@@ -35,5 +35,5 @@ jobs:
           context: .
           load: true
           file: ./Dockerfile
-          tags: codingandshare/database-backup:latest
-      - run: docker push codingandshare/database-backup:latest
+          tags: codingandshare/database-backup-remote:latest
+      - run: docker push codingandshare/database-backup-remote:latest
