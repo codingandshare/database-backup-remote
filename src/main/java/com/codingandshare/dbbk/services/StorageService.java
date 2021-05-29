@@ -8,7 +8,7 @@ package com.codingandshare.dbbk.services;
  * @author Nhan Dinh
  * @since 05/29/2021
  */
-public interface BackupStorageService {
+public interface StorageService {
 
   /**
    * The method to handle store file backup to some storages.

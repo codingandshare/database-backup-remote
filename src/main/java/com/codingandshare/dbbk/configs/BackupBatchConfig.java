@@ -16,6 +16,12 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * The class config job to backup database.
+ * Using the spring batch create job backup.
+ * The job will contain some steps:
+ * - read meta data step.
+ * - backup data for table step.
+ * - backup meta data for database step.
+ * - store backup file to some storages.
  *
  * @author Nhan Dinh
  * @since 5/8/21

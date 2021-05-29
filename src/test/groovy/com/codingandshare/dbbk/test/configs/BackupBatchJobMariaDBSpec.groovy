@@ -129,7 +129,22 @@ class BackupBatchJobMariaDBSpec extends BaseSpecification {
     databaseMetaLogs[10].level == Level.INFO
     databaseMetaLogs[10].message == 'FileWriter is closed.'
 
+    and: 'Check folder backup storage local'
+    File folderBackup = new File('/tmp/data_backup')
+    folderBackup.exists()
+    folderBackup.isDirectory()
+    String[] files = folderBackup.list()
+    files.length == 1
+    String fileNameStore = "test.${AppUtility.formatDate(new Date(), 'yyyy-MM-dd')}.sql"
+    String fileNameBackup = files[0]
+    fileNameBackup == fileNameStore
+    File fileBackupStorage = new File("/tmp/data_backup/$fileNameStore")
+    fileBackupStorage.exists()
+    fileBackupStorage.isFile()
+    fileBackupStorage.text == file.text
+
     cleanup:
     file.delete()
+    AppUtility.cleanDirectory('/tmp/data_backup')
   }
 }

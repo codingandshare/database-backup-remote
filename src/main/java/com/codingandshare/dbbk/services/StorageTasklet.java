@@ -29,11 +29,11 @@ public class StorageTasklet implements Tasklet {
    * Get list storage service api.
    */
   @Autowired
-  private List<BackupStorageService> backupStorageServices;
+  private List<StorageService> backupStorageServices;
 
   /**
    * The method execute all storage service and that method will be executed by backup job.
-   * Always {@link com.codingandshare.dbbk.services.impl.LocalBackupStorageService} is executing.
+   * Always {@link com.codingandshare.dbbk.services.impl.LocalStorageService} is executing.
    * Some storages can config by user.
    *
    * @param contribution
@@ -43,12 +43,10 @@ public class StorageTasklet implements Tasklet {
    */
   @Override
   public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-    if (this.backupStorageServices != null && !this.backupStorageServices.isEmpty()) {
-      for (BackupStorageService backupStorageService : this.backupStorageServices) {
-        log.info(String.format("%s is starting...", backupStorageService.getBackupStorageName()));
-        backupStorageService.store();
-        log.info(String.format("%s is done.", backupStorageService.getBackupStorageName()));
-      }
+    for (StorageService backupStorageService : this.backupStorageServices) {
+      log.info(String.format("%s is starting...", backupStorageService.getBackupStorageName()));
+      backupStorageService.store();
+      log.info(String.format("%s is done.", backupStorageService.getBackupStorageName()));
     }
     return RepeatStatus.FINISHED;
   }

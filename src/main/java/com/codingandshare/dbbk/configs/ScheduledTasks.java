@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * The class handle schedule for tasks.
+ * The scheduler help to execute backup job here.
+ * The scheduler is running when 'app.runSchedule' property is true.
  *
  * @author Nhan Dinh
  * @since 4/25/21
@@ -34,6 +36,8 @@ public class ScheduledTasks {
 
   /**
    * The method execute task backup database with cron express.
+   * By default cron express run at 11:00 PM every days.
+   * The cron express can config by user.
    */
   @Scheduled(cron = "${app.scheduleBackup}")
   public void scheduleBackup() {

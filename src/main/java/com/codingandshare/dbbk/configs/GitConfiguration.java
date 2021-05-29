@@ -14,6 +14,7 @@ import java.io.IOException;
 /**
  * The class help config clone git repository.
  * The config help create instance JGit.
+ * Config authenticate for git with 'oauth2' protocol.
  *
  * @author Nhan Dinh
  * @since 5/26/21
