@@ -5,14 +5,13 @@ on:
 jobs:
   test:
     name: Running Units Tests
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install docker # Taken from https://github.com/actions/virtual-environments/issues/1143#issuecomment-652264388
-        run: |
-          mkdir -p ~/.docker/machine/cache
-          curl -Lo ~/.docker/machine/cache/boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
-          brew install docker docker-machine
+      - name: Setup docker
+        uses: docker/setup-buildx-action@v1
+        with:
+          driver: docker
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
@@ -21,4 +20,4 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
       - name: Run unit test
-        run: ./gradlew clean check --debug
+        run: ./gradlew clean check

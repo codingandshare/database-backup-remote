@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import spock.lang.Ignore
 import spock.lang.Stepwise
 
 import java.nio.file.Files
@@ -84,6 +85,7 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     AppUtility.cleanDirectory('/tmp/data_backup')
   }
 
+  @Ignore
   def 'Verify local storage cleanup file with retention days'() {
     given: 'Setup files'
     String fileNameBackup = '/tmp/test.sql'
