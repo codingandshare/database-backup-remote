@@ -15,6 +15,13 @@ spring:
     database-change-log-table: ${PREFIX_TABLE_META:CAS_BATCH_}DATABASECHANGELOG
     change-log: classpath:/db/changelog/db.changelog-master.yaml
     parameters.prefixTable: '${PREFIX_TABLE_META:CAS_BATCH_}'
+
+logging:
+  level:
+    root: info
+    com.codingandshare.dbbk: info
+  pattern:
+    console: '%black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable'
 app:
   scheduleBackup: '-'
   runSchedule: true
