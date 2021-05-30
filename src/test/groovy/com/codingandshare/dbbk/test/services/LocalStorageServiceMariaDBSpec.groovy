@@ -12,10 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import spock.lang.IgnoreIf
 import spock.lang.Stepwise
 
 import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.attribute.BasicFileAttributeView
 import java.nio.file.attribute.FileTime
 
 /**
@@ -85,7 +86,6 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     AppUtility.cleanDirectory('/tmp/data_backup')
   }
 
-  @IgnoreIf({ System.getProperty("os.name").contains("nux") })
   def 'Verify local storage cleanup file with retention days'() {
     given: 'Setup files'
     String fileNameBackup = '/tmp/test.sql'
@@ -93,11 +93,10 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     backupFile.write('Sql test')
     for (int i = 0; i < 7; i++) {
       Date date = new Date() - i
-      new File('/tmp/data_backup').mkdirs()
       String fileNameStore = "/tmp/data_backup/test.${AppUtility.formatDate(date, 'yyyy-MM-dd')}.sql"
       File file = new File(fileNameStore)
       file.write('sql test')
-      Files.setAttribute(file.toPath(), 'lastModifiedTime', FileTime.fromMillis(date.time))
+      setLastModifyFile(file.toPath(), date)
     }
     new File('/tmp/data_backup/nhan.txt').createNewFile()
     ListAppender<ILoggingEvent> localStorageLogs = setupLogger(LocalStorageService)
@@ -131,16 +130,22 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
 
     and: 'Check message log as expect'
     localStorageLogs.list.size() == 4
+    List<ILoggingEvent> logs = localStorageLogs.list.sort { it.message }
     Date d = new Date() - 6
     for (int i = 0; i < 4; i++) {
       Date date = d + i
       String fileNameStore = "test.${AppUtility.formatDate(date, 'yyyy-MM-dd')}.sql"
-      assert localStorageLogs.list[i].getLevel() == Level.DEBUG
-      assert localStorageLogs.list[i].message == "File $fileNameStore is deleted: true"
+      assert logs[i].getLevel() == Level.DEBUG
+      assert logs[i].message == "File $fileNameStore is deleted: true"
     }
-
     cleanup:
     backupFile.delete()
     AppUtility.cleanDirectory('/tmp/data_backup')
+  }
+
+  private static void setLastModifyFile(Path path, Date date) {
+    BasicFileAttributeView attributes = Files.getFileAttributeView(path, BasicFileAttributeView)
+    FileTime fileTime = FileTime.fromMillis(date.time)
+    attributes.setTimes(fileTime, fileTime, fileTime)
   }
 }
