@@ -12,6 +12,19 @@ spring:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
     parameters.prefixTable: '${PREFIX_TABLE_META:CAS_BATCH_}'
 
+# Config logger for file and console
+# Location file will store on STORAGE_FOLDER/logs/backup-remote.log
+# User can config log level then set LOG_LEVEL in environment.
+logging:
+  level:
+    root: info
+    com.codingandshare.dbbk: '${LOG_LEVEL:info}'
+  file:
+    name: '${STORAGE_FOLDER}/logs/backup-remote.log'
+  pattern:
+    file: '%d %p %C{1.} [%t] %m%n'
+    console: '%black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable'
+
 app:
   runSchedule: true
   scheduleBackup: '${SCHEDULE_BACKUP:* 0/23 * * * *}'
