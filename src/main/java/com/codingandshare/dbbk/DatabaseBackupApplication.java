@@ -27,8 +27,6 @@ public class DatabaseBackupApplication {
       validateDBType(dbType);
       SpringApplication.run(DatabaseBackupApplication.class, args);
     } catch (ValidateException e) {
-      System.err.println("Validate error");
-      e.printStackTrace();
       System.exit(1);
     }
   }

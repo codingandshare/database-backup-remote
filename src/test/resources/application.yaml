@@ -27,4 +27,8 @@ app:
   runSchedule: true
   storageFolder: '/tmp'
   retentionBackupFile: 3
-  gitStorage: false
+  gitStorage: '${GIT_STORAGE:false}'
+  git:
+    token: '${GIT_TOKEN}'
+    gitBranch: '${GIT_BRANCH}'
+    gitDir: '/tmp/test-backup'

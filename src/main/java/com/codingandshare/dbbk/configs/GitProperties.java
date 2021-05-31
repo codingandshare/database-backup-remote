@@ -15,15 +15,14 @@ import org.springframework.context.annotation.Configuration;
  * @author Nhan Dinh
  * @since 5/27/21
  **/
-@Getter
 @Setter
+@Getter
 @Configuration
 @ConditionalOnProperty(havingValue = "true", value = "app.gitStorage")
 @ConfigurationProperties(prefix = "app.git")
 public class GitProperties {
 
   private String token;
-  private String gitRemoteUrl;
   private String gitBranch;
   private String gitDir;
 }
