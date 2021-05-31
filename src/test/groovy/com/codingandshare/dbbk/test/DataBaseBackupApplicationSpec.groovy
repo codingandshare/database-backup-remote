@@ -2,6 +2,7 @@ package com.codingandshare.dbbk.test
 
 import com.codingandshare.dbbk.DatabaseBackupApplication
 import com.codingandshare.dbbk.exceptions.ValidateException
+import com.codingandshare.dbbk.utils.DBBackupConst
 import spock.lang.Specification
 
 /**

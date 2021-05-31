@@ -1,7 +1,7 @@
 package com.codingandshare.dbbk.configs;
 
+import com.codingandshare.dbbk.exceptions.DBBackupException;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,6 +15,10 @@ import java.io.IOException;
  * The class help config clone git repository.
  * The config help create instance JGit.
  * Config authenticate for git with 'oauth2' protocol.
+ * If 'app.gitStorage' is true then the user must set all config environments git:
+ * - GIT_TOKEN
+ * - GIT_BRANCH
+ * - GIT_DIR
  *
  * @author Nhan Dinh
  * @since 5/26/21
@@ -47,30 +51,28 @@ public class GitConfiguration {
 
   /**
    * Create an {@link Bean} help to config git repository.
-   * If the folder git is exists then open git with JGit.
-   * If the folder git don't exists then clone repository.
+   * Detect folder <pre>app.git.gitDir</pre> is git repository or no
    *
    * @return {@link Git}
-   * @throws RuntimeException - When clone repository failed.
-   *                          - Authentication token git failed.
-   *                          - The git folder is not repository.
-   *                          - The branch user config is invalid.
+   * @throws DBBackupException - Authentication token git failed.
+   *                           - The git folder is not repository.
+   *                           - The branch user config is invalid.
    */
   @Bean
   Git gitConfig() {
     try {
       File file = new File(this.gitProperties.getGitDir());
       if (file.exists()) {
-        return Git.open(file);
+        File fileRepoGit = new File(
+            String.format("%s%s", this.gitProperties.getGitDir(), File.separator),
+            ".git"
+        );
+        return Git.open(fileRepoGit);
       } else {
-        return Git.cloneRepository()
-            .setDirectory(file)
-            .setURI(this.gitProperties.getGitRemoteUrl())
-            .setCredentialsProvider(this.usernamePasswordCredentialsProvider())
-            .call();
+        throw new DBBackupException(String.format("Git dir invalid: %s", this.gitProperties.getGitDir()));
       }
-    } catch (GitAPIException | IOException e) {
-      throw new RuntimeException("Git clone failed", e);
+    } catch (IOException e) {
+      throw new DBBackupException("Git open folder failed", e);
     }
   }
 }

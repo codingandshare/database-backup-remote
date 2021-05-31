@@ -57,7 +57,6 @@ public class GitStorageService extends AbstractStorageService implements Storage
    * The branch git config by user.
    * The user must set environments:
    * - GIT_TOKEN: token personal generate on git repository.
-   * - GIT_REMOTE_URL: git remote url to push file.
    * - GIT_BRANCH: branch user want to push file.
    * - GIT_DIR: the folder store git repository on local server.
    * The steps push file to git server:
@@ -76,7 +75,7 @@ public class GitStorageService extends AbstractStorageService implements Storage
     try {
       this.git.fetch().setCredentialsProvider(this.usernamePasswordCredentialsProvider).call();
       this.git.checkout().setName(this.gitProperties.getGitBranch()).call();
-      this.git.push().setCredentialsProvider(this.usernamePasswordCredentialsProvider).call();
+      this.git.pull().setCredentialsProvider(this.usernamePasswordCredentialsProvider).call();
       String backupFileGit = String.format(
           "%s%s%s.sql",
           this.gitProperties.getGitDir(),
