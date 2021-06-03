@@ -32,3 +32,38 @@ app:
     token: '${GIT_TOKEN}'
     gitBranch: '${GIT_BRANCH}'
     gitDir: '/tmp/test-backup'
+---
+spring:
+  config:
+    use-legacy-processing: true
+  profiles: mysql-test
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mariadb:10.3:///test?user=root&password=&TC_INITSCRIPT=test_init_mariadb.sql
+  batch:
+    initialize-schema: NEVER
+    job:
+      enabled: false
+    table-prefix: '${PREFIX_TABLE_META:CAS_BATCH_}'
+  liquibase:
+    database-change-log-lock-table: ${PREFIX_TABLE_META:CAS_BATCH_}DATABASECHANGELOGLOCK
+    database-change-log-table: ${PREFIX_TABLE_META:CAS_BATCH_}DATABASECHANGELOG
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    parameters.prefixTable: '${PREFIX_TABLE_META:CAS_BATCH_}'
+
+logging:
+  level:
+    root: info
+    com.codingandshare.dbbk: info
+  pattern:
+    console: '%black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable'
+app:
+  scheduleBackup: '-'
+  runSchedule: true
+  storageFolder: '/tmp'
+  retentionBackupFile: 3
+  gitStorage: '${GIT_STORAGE:false}'
+  git:
+    token: '${GIT_TOKEN}'
+    gitBranch: '${GIT_BRANCH}'
+    gitDir: '/tmp/test-backup'

@@ -5,7 +5,9 @@
 
 <suppressions>
     <suppress checks="FinalParameters" files="src/.+java$"/>
+    <suppress checks="AvoidStarImport" files="src/.+java$"/>
     <suppress checks="HiddenField" files="src/.+java$"/>
     <suppress checks="HideUtilityClassConstructorCheck" files="DatabaseBackupApplication.java"/>
     <suppress checks="VisibilityModifier" files="AbstractStorageService.java"/>
+    <suppress checks="VisibilityModifier" files="TableMetaDataAbstract.java"/>
 </suppressions>

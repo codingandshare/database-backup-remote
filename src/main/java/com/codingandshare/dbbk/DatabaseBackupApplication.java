@@ -39,7 +39,7 @@ public class DatabaseBackupApplication {
    */
   static void validateDBType(String dbType) throws ValidateException {
     if (dbType == null || dbType.isEmpty()) {
-      throw new ValidateException("Required environment DB_TYPE");
+      throw new ValidateException("Required environment SPRING_PROFILES_ACTIVE");
     }
     if (!Arrays.asList(DBBackupConst.DB_TYPE_SUPPORT).contains(dbType)) {
       throw new ValidateException(String.format("Database type %s is invalid", dbType));

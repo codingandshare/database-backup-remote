@@ -13,14 +13,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * The class implement {@link TableMetaDataRepository} interface handle MariaDB.
+ * The class implement the interface {@link TableMetaDataRepository} for MYSQL database.
+ * Get meta data and generate script create/drop/insert for backup data.
  *
  * @author Nhan Dinh
- * @since 4/23/21
+ * @since 6/1/21
  **/
+@Profile({"mysql", "mysql-test"})
 @Repository
-@Profile({"mariadb", "mariadb-test"})
-public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implements TableMetaDataRepository {
+public class TableMetaDataRepositoryMySQL extends TableMetaDataAbstract implements TableMetaDataRepository {
 
   /**
    * The method to get all tables in database.
@@ -29,9 +30,10 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
    * @param databaseName database name.
    * @return List tables of a database.
    */
+  @Override
   public List<String> getAllTables(String databaseName) {
     String sql = GET_ALL_TABLES.replace(DB_NAME_EXPRESSION, databaseName);
-    List<String> tables = this.queryAsListString(sql, "table_name");
+    List<String> tables = this.queryAsListString(sql, "Name");
     List<String> excludeTables = Arrays.stream(DBBackupConst.META_TABLES)
         .map(it -> String.format("%s%s", this.prefixTableMeta, it)).collect(Collectors.toList());
     tables.removeIf(excludeTables::contains);
@@ -39,25 +41,27 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   }
 
   /**
-   * The method to get all views for backup.
+   * The method get all views need to backup script create.
    *
    * @param databaseName database name.
-   * @return List views of a database.
+   * @return List views in database
    */
+  @Override
   public List<String> getAllViews(String databaseName) {
     String sql = SQL_GET_VIEWS.replace(DB_NAME_EXPRESSION, databaseName);
-    return this.queryAsListString(sql, "table_name");
+    return this.queryAsListString(sql, "Name");
   }
 
   /**
-   * Get all trigger names.
+   * The method get all triggers in database.
    *
    * @param databaseName
-   * @return List trigger names
+   * @return list triggers in database
    */
+  @Override
   public List<String> getAllTriggers(String databaseName) {
-    String sql = SQL_GET_TRIGGER.replace(DB_NAME_EXPRESSION, databaseName);
-    return this.queryAsListString(sql, "trigger");
+    String sql = SQL_GET_TRIGGERS.replace(DB_NAME_EXPRESSION, databaseName);
+    return this.queryAsListString(sql, "Trigger");
   }
 
   /**
@@ -198,7 +202,7 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
         "SELECT VERSION()",
         (rs, rowNum) -> rs.getString(1)
     );
-    return String.format("MariaDB %s", version);
+    return String.format("MySQL %s", version);
   }
 
   /**
@@ -379,7 +383,7 @@ public class TableMetaDataRepositoryMariaDB extends TableMetaDataAbstract implem
   }
 
   private static final String SQL_GET_VIEWS = "SHOW TABLE STATUS FROM ${DB_NAME} WHERE Comment = 'VIEW'";
-  private static final String SQL_GET_TRIGGER = "SHOW TRIGGERS FROM ${DB_NAME}";
+  private static final String SQL_GET_TRIGGERS = "SHOW TRIGGERS FROM ${DB_NAME}";
   private static final String SQL_GET_FUNCTIONS = "SHOW FUNCTION STATUS WHERE DB = '${DB_NAME}'";
   private static final String SQL_GET_PROCEDURES = "SHOW PROCEDURE STATUS WHERE DB = '${DB_NAME}'";
   private static final String GET_ALL_TABLES = "SHOW TABLE STATUS FROM ${DB_NAME} WHERE Comment != 'VIEW'";

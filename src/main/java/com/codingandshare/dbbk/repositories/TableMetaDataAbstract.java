@@ -1,26 +1,14 @@
 package com.codingandshare.dbbk.repositories;
 
-import com.codingandshare.dbbk.utils.DBBackupConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.sql.Connection;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.codingandshare.dbbk.utils.SqlUtility.sqlDate;
-import static com.codingandshare.dbbk.utils.SqlUtility.sqlString;
-import static com.codingandshare.dbbk.utils.SqlUtility.sqlTime;
-import static com.codingandshare.dbbk.utils.SqlUtility.sqlTimestamp;
-import static com.codingandshare.dbbk.utils.SqlUtility.sqlBytes;
-import static com.codingandshare.dbbk.utils.SqlUtility.sqlNumber;
+import static com.codingandshare.dbbk.utils.SqlUtility.*;
 
 /**
  * The abstraction class for <code>TableMetaDataRepository</code>.
@@ -30,7 +18,7 @@ import static com.codingandshare.dbbk.utils.SqlUtility.sqlNumber;
  **/
 public abstract class TableMetaDataAbstract {
 
-  private static final String DB_NAME_EXPRESSION = "${DB_NAME}";
+  protected static final String DB_NAME_EXPRESSION = "${DB_NAME}";
 
   /**
    * The prefix table meta will get from application properties.
@@ -38,10 +26,10 @@ public abstract class TableMetaDataAbstract {
    * By default is <pre>CAS_BATCH_</pre>.
    */
   @Value("${spring.batch.table-prefix}")
-  private String prefixTableMeta;
+  protected String prefixTableMeta;
 
   @Autowired
-  private JdbcTemplate jdbcTemplate;
+  protected JdbcTemplate jdbcTemplate;
 
   /**
    * get database name from connection.
@@ -53,79 +41,35 @@ public abstract class TableMetaDataAbstract {
   }
 
   /**
-   * The method to get all tables in database.
-   * Exclude all table meta of this service.
+   * Using the {@link JdbcTemplate} execute query.
+   * The method common for execute query get list string.
    *
-   * @param databaseName database name.
-   * @return List tables of a database.
+   * @param query query need to execute
+   * @param column column name need fetch after executed
+   * @return List result as string
    */
-  public List<String> getAllTables(String databaseName) {
-    String sql = this.sqlGetAllTables().replace(DB_NAME_EXPRESSION, databaseName);
-    List<String> tables = this.jdbcTemplate.query(
-        sql,
-        (rs, rowNum) -> rs.getString("table_name")
-    );
-    List<String> excludeTables = Arrays.stream(DBBackupConst.META_TABLES)
-        .map(it -> String.format("%s%s", this.prefixTableMeta, it)).collect(Collectors.toList());
-    tables.removeIf(excludeTables::contains);
-    return tables;
-  }
-
-  /**
-   * The method to get all views.
-   *
-   * @param databaseName database name.
-   * @return List views of a database.
-   */
-  public List<String> getAllViews(String databaseName) {
-    String sql = this.sqlGetAllViews().replace(DB_NAME_EXPRESSION, databaseName);
+  protected List<String> queryAsListString(String query, String column) {
     return this.jdbcTemplate.query(
-        sql,
-        (rs, rowNum) -> rs.getString("table_name")
+        query,
+        (rs, rowNum) -> rs.getString(column)
     );
   }
 
   /**
-   * Get all trigger names.
+   * Using the {@link JdbcTemplate} execute query.
+   * The method common for execute query get an string.
    *
-   * @param databaseName
-   * @return List trigger names
+   * @param query query need to execute
+   * @param column column name need fetch after executed
+   * @return List result as string
    */
-  public List<String> getAllTriggers(String databaseName) {
-    String sql = this.sqlGetAllTriggers().replace(DB_NAME_EXPRESSION, databaseName);
-    return this.jdbcTemplate.query(
-        sql,
-        (rs, rowNum) -> rs.getString("trigger")
+  protected String queryAsString(String query, String column) {
+    return this.jdbcTemplate.queryForObject(
+        query,
+        (rs, rowNum) -> rs.getString(column)
     );
   }
 
-  /**
-   * get all procedure names.
-   *
-   * @param databaseName
-   * @return List procedure names
-   */
-  public List<String> getAllProcedures(String databaseName) {
-    String sql = this.sqlGetAllProcedures().replace(DB_NAME_EXPRESSION, databaseName);
-    return this.jdbcTemplate.query(
-        sql,
-        (rs, rowNum) -> rs.getString("Name")
-    );
-  }
-
-  /**
-   * get all functions.
-   *
-   * @param databaseName
-   * @return list function
-   */
-  public List<String> getAllSqlFunctions(String databaseName) {
-    String sql = this.sqlGetAllFunctions().replace(DB_NAME_EXPRESSION, databaseName);
-    return this.jdbcTemplate.query(
-        sql,
-        (rs, rowNum) -> rs.getString("Name")
-    );
-  }
 
   /**
    * Help to build the value for sql insert from {@link ResultSet}.
@@ -221,34 +165,6 @@ public abstract class TableMetaDataAbstract {
   }
 
   /**
-   * Abstract method to get sql select all views from database.
-   *
-   * @return sql get all views from database name.
-   */
-  protected abstract String sqlGetAllViews();
-
-  /**
-   * Abstract get sql select all triggers from database.
-   *
-   * @return sql get all triggers
-   */
-  protected abstract String sqlGetAllTriggers();
-
-  /**
-   * Abstract get sql select all functions from database.
-   *
-   * @return sql get all functions
-   */
-  protected abstract String sqlGetAllFunctions();
-
-  /**
-   * Abstract get sql select all procedures from database.
-   *
-   * @return sql get all procedures
-   */
-  protected abstract String sqlGetAllProcedures();
-
-  /**
    * Abstract method help to get date format depend on database type.
    *
    * @return date format
@@ -268,20 +184,4 @@ public abstract class TableMetaDataAbstract {
    * @return date time format.
    */
   protected abstract String getDateTimeFormat();
-
-  /**
-   * Abstract method to get sql select all tables from database.
-   *
-   * @return sql get all tables.
-   */
-  protected abstract String sqlGetAllTables();
-
-  /**
-   * Expose JdbcTemplate to parent class for using.
-   *
-   * @return JdbcTemplate
-   */
-  protected JdbcTemplate getJdbcTemplate() {
-    return this.jdbcTemplate;
-  }
 }

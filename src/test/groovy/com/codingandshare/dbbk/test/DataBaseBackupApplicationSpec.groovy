@@ -20,8 +20,8 @@ class DataBaseBackupApplicationSpec extends Specification {
 
     where:
     dbType | messageExpect
-    null   | 'Required environment DB_TYPE'
-    ''     | 'Required environment DB_TYPE'
+    null   | 'Required environment SPRING_PROFILES_ACTIVE'
+    ''     | 'Required environment SPRING_PROFILES_ACTIVE'
     'abc'  | 'Database type abc is invalid'
   }
 
@@ -35,5 +35,6 @@ class DataBaseBackupApplicationSpec extends Specification {
     where:
     dbType    | _
     'mariadb' | _
+    'mysql' | _
   }
 }
