@@ -15,7 +15,7 @@ services:
     networks:
       - mynetwork
   backup-service-mariadb:
-    image: backup-test
+    image: codingandshare/database-backup-remote
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: mariadb
