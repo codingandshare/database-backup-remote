@@ -48,9 +48,14 @@ public final class DBBackupConst {
   public static final String MARIADB = "mariadb";
 
   /**
+   * Constant database type for mysql.
+   */
+  public static final String MYSQL = "mysql";
+
+  /**
    * The list database type support for current version.
    */
-  public static final String[] DB_TYPE_SUPPORT = new String[]{MARIADB};
+  public static final String[] DB_TYPE_SUPPORT = new String[]{MARIADB, MYSQL};
 
   /**
    * The value is default for fetch number records into memory.

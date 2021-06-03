@@ -94,7 +94,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: JOB_KEY
-                  type: VARCHAR(2500)
+                  type: VARCHAR(255)
   - changeSet:
       id: 6
       author: huunhancit
