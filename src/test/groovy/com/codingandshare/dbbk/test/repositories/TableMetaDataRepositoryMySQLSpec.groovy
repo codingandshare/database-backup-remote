@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.TransientDataAccessResourceException
 import org.springframework.jdbc.BadSqlGrammarException
+import org.springframework.jdbc.UncategorizedSQLException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowCallbackHandler
 import org.springframework.test.context.ActiveProfiles
@@ -127,7 +128,7 @@ CREATE TABLE `user` (
     this.tableMetaDataRepository.generateScriptCreateView('user')
 
     then: 'Result as expect'
-    thrown(TransientDataAccessResourceException)
+    thrown(UncategorizedSQLException)
   }
 
   def 'Verify generate script create view successfully'() {
@@ -136,7 +137,7 @@ CREATE TABLE `user` (
 
     then: 'Result as expect'
     noExceptionThrown()
-    sqlCreateView == '''CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `user_view` AS select `u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`password` AS `password`,`u`.`first_name` AS `first_name`,`u`.`last_name` AS `last_name`,`u`.`email` AS `email`,`u`.`gender` AS `gender`,`u`.`status` AS `status`,`r`.`role_name` AS `role_name` from ((`user` `u` join `user_role` `u_role` on(`u`.`id` = `u_role`.`user_id`)) join `role` `r` on(`r`.`id` = `u_role`.`role_id`))'''
+    sqlCreateView == '''CREATE ALGORITHM=UNDEFINED DEFINER=`test`@`%` SQL SECURITY DEFINER VIEW `user_view` AS select `u`.`id` AS `id`,`u`.`username` AS `username`,`u`.`password` AS `password`,`u`.`first_name` AS `first_name`,`u`.`last_name` AS `last_name`,`u`.`email` AS `email`,`u`.`gender` AS `gender`,`u`.`status` AS `status`,`r`.`role_name` AS `role_name` from ((`user` `u` join `user_role` `u_role` on((`u`.`id` = `u_role`.`user_id`))) join `role` `r` on((`r`.`id` = `u_role`.`role_id`)))'''
   }
 
   def 'Verify generate script create trigger when trigger not existing'() {
@@ -144,7 +145,7 @@ CREATE TABLE `user` (
     this.tableMetaDataRepository.generateScriptCreateTrigger('trigger_a')
 
     then: 'Result as expect'
-    thrown(TransientDataAccessResourceException)
+    thrown(UncategorizedSQLException)
   }
 
   def 'Verify generate script create trigger successfully'() {
@@ -153,7 +154,7 @@ CREATE TABLE `user` (
 
     then: 'Result as expect'
     noExceptionThrown()
-    scriptTrigger == 'CREATE DEFINER=`root`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR EACH ROW DELETE FROM user_role WHERE role_id = OLD.id'
+    scriptTrigger == 'CREATE DEFINER=`test`@`%` TRIGGER before_role_delete BEFORE DELETE ON role FOR EACH ROW DELETE FROM user_role WHERE role_id = OLD.id'
   }
 
   def 'Verify generate script create procedure when procedure not existing'() {
@@ -170,7 +171,7 @@ CREATE TABLE `user` (
 
     then: 'Result as expect'
     noExceptionThrown()
-    scriptProcedure == '''CREATE DEFINER=`root`@`%` PROCEDURE `GetUserName`( OUT userName VARCHAR (20) )
+    scriptProcedure == '''CREATE DEFINER=`test`@`%` PROCEDURE `GetUserName`( OUT userName VARCHAR (20) )
 BEGIN
     SET
 userName = 'Nhan Dinh';
@@ -191,7 +192,7 @@ END'''
 
     then: 'Result as expect'
     noExceptionThrown()
-    scriptFunction == '''CREATE DEFINER=`root`@`%` FUNCTION `getUserName_Func`() RETURNS varchar(20) CHARSET latin1
+    scriptFunction == '''CREATE DEFINER=`test`@`%` FUNCTION `getUserName_Func`() RETURNS varchar(20) CHARSET latin1
     DETERMINISTIC
 BEGIN
     DECLARE
@@ -337,7 +338,7 @@ END'''
     values
     values.size() == 2
     String.join(',', values.first()) == 'NULL'
-    String.join(',', values[1]) == "535452494E47"
+    String.join(',', values.last()) == "'STRING'"
   }
 
   def 'Verify get all columns from ResultSet'() {
