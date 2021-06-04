@@ -12,7 +12,57 @@
 - This service support some storages for store backup data file.
 
 ## Usage
+#### Run service manually
+- Require OpenJDK 11 installed
+- Set environment for service, require some variables:
+```sh
+export SPRING_PROFILES_ACTIVE=mariadb
+export DB_HOST=localhost
+export DB_USER=user_backup
+export DB_PASS=password
+export DB_NAME=database_name
+export STORAGE_FOLDER=/tmp/backup
+```
+- Download jar file
+- Execute jar file
+```sh
+java -Xmx256m -Djava.security.egd=file:/dev/./urandom -jar database-backup-remote.1.0.RELEASE.jar
+```
+#### Run service with docker
+- The link on docker hub: [docker repo](https://hub.docker.com/r/codingandshare/database-backup-remote)
+- Pull image to local machine
+```sh
+docker pull codingandshare/database-backup-remote
+```
+- Create file `env.list` with content here:
+```
+SPRING_PROFILES_ACTIVE=mariadb
+DB_HOST=IP_address_database
+DB_USER=user_backup
+DB_PASS=password
+DB_NAME=database_name
+STORAGE_FOLDER=/tmp/backup
+```
+- Run docker image latest
+```sh
+docker run --env-file ./env.list codingandshare/database-backup-remote
+```
+If you want to use `docker-compose`. Please refer the samples [docker-compose samples](https://github.com/codingandshare/database-backup-remote/tree/main/samples)
 
+#### Environment Variables
+- `SPRING_PROFILES_ACTIVE` is required. The value is database type want to backup, on this version only support some values: `mariadb`, `mysql`. When the value is invalid the service will be failed.
+- `DB_HOST` is required. The value is ip address of database server need to backup.
+- `DB_USER` is required. The value is username can connect to database server.
+- `DB_PASS` is required. The value is password connect to database server. By default value is empty.
+- `DB_NAME` is required. The database name want to backup data.
+- `STORAGE_FOLDER` is required. Is the folder store file backup data.
+- `PREFIX_TABLE_META` is optional. Is variable custom prefix meta tables of this servvice. By default is `CAS_BATCH_`.
+- `SCHEDULE_BACKUP` is optional. Is variable custom cron expression for schedule backup task. By default is `* 0/23 * * * *`, the service will run at 11PM every day.
+- `RETENTION_FILE_BACKUP` is optional. Is variable custom retention file store on local. By default is `7` days.
+- `GIT_STORAGE` is optional. Is variable enable/disable git storage, help to put the backup file to git repository. By default is `false`
+- `GIT_TOKEN` is required when `GIT_STORAGE` is `true`. Is variable config personal token `oauth2`. By default is empty
+- `GIT_BRANCH`is required when `GIT_STORAGE` is `true`. Is variable set branch name on git to push file. By default is empty
+- `GIT_DIR`is required when `GIT_STORAGE` is `true`. Is vairable config folder git cloned.
 
 #### Database support
 | <span style="font-size: 12px;">Database</span>                   | <span style="font-size: 12px;">Support</span>|
@@ -21,8 +71,6 @@
 | <span style="font-size: 10px;">MySQL</span>                      |  <span style="font-size: 10px;">✔</span>️️     |
 | <span style="font-size: 10px;">PostgreSQL</span>                 |  <span style="font-size: 10px;">❌</span>️    |
 | <span style="font-size: 10px;">MSSQL</span>                      |  <span style="font-size: 10px;">❌</span>️    |
-
-*****
 
 #### Storage support
 | <span style="font-size: 12px;">Storage</span>                   | <span style="font-size: 12px;">Support</span>|
@@ -46,7 +94,7 @@
 
 ## Stay in touch
 
-- Author - <a href="skype:live:42d31569536d16f1?chat">Nhan Dinh</a>
+- Author - <a href="skype:42d31569536d16f1?chat">Nhan Dinh</a>
 - GitHub - [Coding and share](https://github.com/codingandshare)
 
 ## License
