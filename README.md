@@ -23,7 +23,7 @@ export DB_PASS=password
 export DB_NAME=database_name
 export STORAGE_FOLDER=/tmp/backup
 ```
-- Download jar file
+- Download file [database-backup-remote-1.0.RELEASE.jar](https://github.com/codingandshare/database-backup-remote/releases/download/releases%2F1.0.RELEASE/database-backup-remote-1.0.RELEASE.jar)
 - Execute jar file
 ```sh
 java -Xmx256m -Djava.security.egd=file:/dev/./urandom -jar database-backup-remote.1.0.RELEASE.jar
