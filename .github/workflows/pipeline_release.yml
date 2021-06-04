@@ -23,6 +23,8 @@ jobs:
         run: chmod +x ./gradlew
       - name: Build java
         run: ./gradlew clean build
+      - name: Set branch name
+        run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
@@ -36,5 +38,5 @@ jobs:
           context: .
           load: true
           file: ./Dockerfile
-          tags: codingandshare/database-backup-remote:${GITHUB_REF##*/}
-      - run: docker push codingandshare/database-backup-remote:${GITHUB_REF##*/}
+          tags: codingandshare/database-backup-remote:${{ env.BRANCH }}
+      - run: docker push codingandshare/database-backup-remote:${{ env.BRANCH }}
