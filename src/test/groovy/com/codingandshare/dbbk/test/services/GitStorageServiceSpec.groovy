@@ -27,8 +27,8 @@ class GitStorageServiceSpec extends BaseSpecification {
   private CommitCommand commitCommand
 
   def setup() {
-    File file = new File('/tmp/test.sql')
-    file.write('This is test')
+    File file = new File('/tmp/test.zip')
+    file.createNewFile()
     File gitFile = new File('/tmp/git/data-test')
     gitFile.mkdirs()
     this.gitStorageService = new GitStorageService()
@@ -77,8 +77,10 @@ class GitStorageServiceSpec extends BaseSpecification {
     log.list.first().level == Level.ERROR
     log.list.first().message == 'Git store failed'
 
-    and: 'File copied to git dir'
-    new File('/tmp/test.sql').text == new File('/tmp/git/data-test/test.sql').text
+    and: 'File zipped copied to git dir'
+    File zipped = new File('/tmp/test.zip')
+    zipped.exists()
+    zipped.isFile()
   }
 
   def 'Verify store git successfully'() {
@@ -98,7 +100,9 @@ class GitStorageServiceSpec extends BaseSpecification {
     log.list.size() == 0
 
     and: 'File copied to git dir'
-    new File('/tmp/test.sql').text == new File('/tmp/git/data-test/test.sql').text
+    File fileZipped = new File('/tmp/git/data-test/test.zip')
+    fileZipped.exists()
+    fileZipped.isFile()
   }
 
   def 'Verify store git throw IOException'() {

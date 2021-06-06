@@ -75,14 +75,17 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     noExceptionThrown()
 
     and: 'Check file backup copy to local storage'
-    String fileNameExpect = "/tmp/data_backup/test.${AppUtility.formatDate(new Date(), 'yyyy-MM-dd')}.sql"
+    String fileNameExpect = "/tmp/data_backup/test.${AppUtility.formatDate(new Date(), 'yyyy-MM-dd')}.zip"
     File fileExpect = new File(fileNameExpect)
     fileExpect.exists()
     fileExpect.isFile()
-    fileExpect.text == backupFile.text
+    File fileBackupZipped = new File('/tmp/test.zip')
+    String checksumFileBackupZipped = AppUtility.getCheckSumFile(fileBackupZipped)
+    checksumFileBackupZipped == AppUtility.getCheckSumFile(fileExpect)
 
     cleanup:
     backupFile.delete()
+    fileBackupZipped.delete()
     AppUtility.cleanDirectory('/tmp/data_backup')
   }
 
@@ -93,9 +96,9 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     backupFile.write('Sql test')
     for (int i = 0; i < 7; i++) {
       Date date = new Date() - i
-      String fileNameStore = "/tmp/data_backup/test.${AppUtility.formatDate(date, 'yyyy-MM-dd')}.sql"
+      String fileNameStore = "/tmp/data_backup/test.${AppUtility.formatDate(date, 'yyyy-MM-dd')}.zip"
       File file = new File(fileNameStore)
-      file.write('sql test')
+      file.createNewFile()
       setLastModifyFile(file.toPath(), date)
     }
     new File('/tmp/data_backup/nhan.txt').createNewFile()
@@ -109,11 +112,10 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     noExceptionThrown()
 
     and: 'Check file backup copy to local storage'
-    String fileNameExpect = "/tmp/data_backup/test.${AppUtility.formatDate(new Date(), 'yyyy-MM-dd')}.sql"
+    String fileNameExpect = "/tmp/data_backup/test.${AppUtility.formatDate(new Date(), 'yyyy-MM-dd')}.zip"
     File fileExpect = new File(fileNameExpect)
     fileExpect.exists()
     fileExpect.isFile()
-    fileExpect.text == backupFile.text
 
     and: 'Check file after cleanup files'
     File fileFolderBackup = new File('/tmp/data_backup')
@@ -124,7 +126,7 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     String[] files = fileNames.sort().reverse().findAll { it != 'nhan.txt' }
     for (int i = 0; i < 3; i++) {
       Date date = new Date() - i
-      String fileNameStore = "test.${AppUtility.formatDate(date, 'yyyy-MM-dd')}.sql"
+      String fileNameStore = "test.${AppUtility.formatDate(date, 'yyyy-MM-dd')}.zip"
       assert files[i] == fileNameStore
     }
 
@@ -134,7 +136,7 @@ class LocalStorageServiceMariaDBSpec extends BaseSpecification {
     Date d = new Date() - 6
     for (int i = 0; i < 4; i++) {
       Date date = d + i
-      String fileNameStore = "test.${AppUtility.formatDate(date, 'yyyy-MM-dd')}.sql"
+      String fileNameStore = "test.${AppUtility.formatDate(date, 'yyyy-MM-dd')}.zip"
       assert logs[i].getLevel() == Level.DEBUG
       assert logs[i].message == "File $fileNameStore is deleted: true"
     }
