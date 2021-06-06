@@ -63,7 +63,7 @@ public class GitStorageService extends AbstractStorageService implements Storage
    * 1. Fetch all branch to local.
    * 2. checkout branch user config.
    * 3. pull latest commit from remote branch.
-   * 4. Copy the file database backup sql to git repo.
+   * 4. Copy the file database backup zip to git repo.
    * 5. Git add databaseName.sql file.
    * 6. Git commit with message "Backup completed: yyyy-MM-ddd"
    * 7. Git push commit to git repo.
@@ -77,17 +77,17 @@ public class GitStorageService extends AbstractStorageService implements Storage
       this.git.checkout().setName(this.gitProperties.getGitBranch()).call();
       this.git.pull().setCredentialsProvider(this.usernamePasswordCredentialsProvider).call();
       String backupFileGit = String.format(
-          "%s%s%s.sql",
+          "%s%s%s.zip",
           this.gitProperties.getGitDir(),
           File.separator,
           this.dataBaseName
       );
       Files.copy(
-          new File(this.fileBackup).toPath(),
+          new File(String.format("%s.zip", this.fileBackup.replace(".sql", ""))).toPath(),
           new File(backupFileGit).toPath(),
           StandardCopyOption.REPLACE_EXISTING
       );
-      String fileNameGitAdding = String.format("%s.sql", this.dataBaseName);
+      String fileNameGitAdding = String.format("%s.zip", this.dataBaseName);
       this.git.add().addFilepattern(fileNameGitAdding).call();
       String commitMessage = String.format(
           "Backup completed: %s",

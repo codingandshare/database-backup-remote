@@ -1,6 +1,11 @@
 package com.codingandshare.dbbk.utils;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
@@ -62,5 +67,20 @@ public final class AppUtility {
    */
   public static boolean isEmpty(String[] array) {
     return array == null || array.length == 0;
+  }
+
+  /**
+   * The function help get checksum MD5 from file.
+   *
+   * @param file input file need get checksum
+   * @return String MD5 checksum
+   * @throws NoSuchAlgorithmException algorithm not found
+   * @throws IOException              when file not found
+   */
+  public static String getCheckSumFile(File file) throws NoSuchAlgorithmException, IOException {
+    MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+    messageDigest.update(Files.readAllBytes(file.toPath()));
+    byte[] digest = messageDigest.digest();
+    return DatatypeConverter.printHexBinary(digest);
   }
 }

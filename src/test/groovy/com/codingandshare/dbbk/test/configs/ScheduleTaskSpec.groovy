@@ -7,6 +7,7 @@ import com.codingandshare.dbbk.utils.AppUtility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+
 /**
  * Unit test for {@link ScheduledTasks}
  */
@@ -42,22 +43,30 @@ class ScheduleTaskSpec extends BaseSpecification {
       }
     }
 
+    and: 'Check backup file zipped'
+    File fileZipped = new File('/tmp/test.zip')
+    fileZipped.exists()
+    fileZipped.isFile()
+    String checksumFileBackup = AppUtility.getCheckSumFile(fileZipped)
+
     and: 'Check folder backup storage local'
     File folderBackup = new File('/tmp/data_backup')
     folderBackup.exists()
     folderBackup.isDirectory()
     String[] files = folderBackup.list()
     files.length == 1
-    String fileNameStore = "test.${AppUtility.formatDate(new Date(), 'yyyy-MM-dd')}.sql"
+    String fileNameStore = "test.${AppUtility.formatDate(new Date(), 'yyyy-MM-dd')}.zip"
     String fileNameBackup = files[0]
     fileNameBackup == fileNameStore
     File fileBackupStorage = new File("/tmp/data_backup/$fileNameStore")
     fileBackupStorage.exists()
     fileBackupStorage.isFile()
-    fileBackupStorage.text == file.text
+    String checksumFileLocalStorage = AppUtility.getCheckSumFile(fileBackupStorage)
+    checksumFileLocalStorage == checksumFileBackup
 
     cleanup:
     file.delete()
+    fileZipped.delete()
     AppUtility.cleanDirectory('/tmp/data_backup')
   }
 }
