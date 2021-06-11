@@ -27,7 +27,7 @@ logging:
 
 app:
   runSchedule: true
-  scheduleBackup: '${SCHEDULE_BACKUP:* 0/23 * * * *}'
+  scheduleBackup: '${SCHEDULE_BACKUP:0 0 23 * * *}' # The backup schedule default 23:00 every days.
   storageFolder: '${STORAGE_FOLDER}'
   retentionBackupFile: '${RETENTION_FILE_BACKUP:7}'
   gitStorage: '${GIT_STORAGE:false}'
