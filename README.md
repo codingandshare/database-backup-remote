@@ -57,12 +57,12 @@ If you want to use `docker-compose`. Please refer the samples [docker-compose sa
 - `DB_NAME` is required. The database name want to backup data.
 - `STORAGE_FOLDER` is required. Is the folder store file backup data.
 - `PREFIX_TABLE_META` is optional. Is variable custom prefix meta tables of this servvice. By default is `CAS_BATCH_`.
-- `SCHEDULE_BACKUP` is optional. Is variable custom cron expression for schedule backup task. By default is `* 0/23 * * * *`, the service will run at 11PM every day.
+- `SCHEDULE_BACKUP` is optional. Is variable custom cron expression for schedule backup task. By default is `0 0 23 * * *`, the service will run at 11PM every day.
 - `RETENTION_FILE_BACKUP` is optional. Is variable custom retention file store on local. By default is `7` days.
 - `GIT_STORAGE` is optional. Is variable enable/disable git storage, help to put the backup file to git repository. By default is `false`
 - `GIT_TOKEN` is required when `GIT_STORAGE` is `true`. Is variable config personal token `oauth2`. By default is empty
 - `GIT_BRANCH`is required when `GIT_STORAGE` is `true`. Is variable set branch name on git to push file. By default is empty
-- `GIT_DIR`is required when `GIT_STORAGE` is `true`. Is vairable config folder git cloned.
+- `GIT_DIR`is required when `GIT_STORAGE` is `true`. Is variable config folder git cloned.
 
 #### Database support
 | <span style="font-size: 12px;">Database</span>                   | <span style="font-size: 12px;">Support</span>|
