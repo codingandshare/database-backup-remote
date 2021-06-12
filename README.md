@@ -5,8 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Java: 11](https://img.shields.io/badge/Java-11-red.svg)
 ![Spring: 5.3.6](https://img.shields.io/badge/Spring-5.3.6-blue.svg)
-![Version: 1.0.RELEASE](https://img.shields.io/badge/Version-1.0.RELEASE-green.svg)
-![Version: 1.0.RELEASE](https://img.shields.io/badge/Test%20coverage-100%25-green.svg)
+![Version: 1.1.RELEASE](https://img.shields.io/badge/Version-1.1.RELEASE-green.svg)
+![Version: 1.1.RELEASE](https://img.shields.io/badge/Test%20coverage-100%25-green.svg)
 
 - The service help to schedule job backup data remotely for some engine databases.
 - This service support some storages for store backup data file.
@@ -23,10 +23,10 @@ export DB_PASS=password
 export DB_NAME=database_name
 export STORAGE_FOLDER=/tmp/backup
 ```
-- Download file [database-backup-remote-1.0.RELEASE.jar](https://github.com/codingandshare/database-backup-remote/releases/download/releases%2F1.0.RELEASE/database-backup-remote-1.0.RELEASE.jar)
+- Download file [database-backup-remote-1.1.RELEASE.jar](https://github.com/codingandshare/database-backup-remote/releases/download/releases%2F1.1.RELEASE/database-backup-remote-1.1.RELEASE.jar)
 - Execute jar file
 ```sh
-java -Xmx256m -Djava.security.egd=file:/dev/./urandom -jar database-backup-remote.1.0.RELEASE.jar
+java -Xmx256m -Djava.security.egd=file:/dev/./urandom -jar database-backup-remote.1.1.RELEASE.jar
 ```
 #### Run service with docker
 - The link on docker hub: [docker repo](https://hub.docker.com/r/codingandshare/database-backup-remote)
